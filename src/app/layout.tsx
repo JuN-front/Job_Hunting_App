@@ -17,9 +17,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ja">
       <body className={inter.className}>
-        {session ? (
+        {session?.user ? (
           <div className="flex h-screen bg-gray-50">
-            <Sidebar user={session.user} />
+            <Sidebar user={{ name: session.user.name, email: session.user.email }} />
             <main className="flex-1 overflow-y-auto p-8">{children}</main>
           </div>
         ) : (
