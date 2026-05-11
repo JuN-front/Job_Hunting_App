@@ -11,21 +11,20 @@ import type { TemplateType } from "@/db/schema";
 async function getSession() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  return session;
+  return session.user.id as string;
 }
 
 export async function createMemo(companyId: string, formData: FormData) {
-  const session = await getSession();
+  const userId = await getSession();
 
-  // 企業の所有確認
   const company = await db.query.companies.findFirst({
-    where: and(eq(companies.id, companyId), eq(companies.userId, session.user.id)),
+    where: and(eq(companies.id, companyId), eq(companies.userId, userId)),
   });
   if (!company) throw new Error("企業が見つかりません");
 
-  const title = formData.get("title") as string;
+  const title = (formData.get("title") as string) || "メモ";
   const templateType = (formData.get("templateType") as TemplateType) ?? "自由メモ";
-  const content = formData.get("content") as string;
+  const content = (formData.get("content") as string) || "";
 
   await db.insert(memos).values({ companyId, title, templateType, content });
 
@@ -34,15 +33,15 @@ export async function createMemo(companyId: string, formData: FormData) {
 }
 
 export async function updateMemo(id: string, companyId: string, formData: FormData) {
-  const session = await getSession();
+  const userId = await getSession();
 
   const company = await db.query.companies.findFirst({
-    where: and(eq(companies.id, companyId), eq(companies.userId, session.user.id)),
+    where: and(eq(companies.id, companyId), eq(companies.userId, userId)),
   });
   if (!company) throw new Error("Unauthorized");
 
-  const title = formData.get("title") as string;
-  const content = formData.get("content") as string;
+  const title = (formData.get("title") as string) || "メモ";
+  const content = (formData.get("content") as string) || "";
 
   await db
     .update(memos)
@@ -53,10 +52,10 @@ export async function updateMemo(id: string, companyId: string, formData: FormDa
 }
 
 export async function deleteMemo(id: string, companyId: string) {
-  const session = await getSession();
+  const userId = await getSession();
 
   const company = await db.query.companies.findFirst({
-    where: and(eq(companies.id, companyId), eq(companies.userId, session.user.id)),
+    where: and(eq(companies.id, companyId), eq(companies.userId, userId)),
   });
   if (!company) throw new Error("Unauthorized");
 

@@ -9,40 +9,40 @@ import { revalidatePath } from "next/cache";
 async function getSession() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  return session;
+  return session.user.id as string;
 }
 
 export async function createTag(formData: FormData) {
-  const session = await getSession();
+  const userId = await getSession();
   const name = formData.get("name") as string;
   const color = (formData.get("color") as string) ?? "#3b82f6";
 
   if (!name) throw new Error("タグ名は必須です");
 
-  await db.insert(tags).values({ userId: session.user.id, name, color });
+  await db.insert(tags).values({ userId, name, color });
   revalidatePath("/tags");
 }
 
 export async function updateTag(id: string, formData: FormData) {
-  const session = await getSession();
+  const userId = await getSession();
   const name = formData.get("name") as string;
   const color = formData.get("color") as string;
 
   await db
     .update(tags)
     .set({ name, color })
-    .where(and(eq(tags.id, id), eq(tags.userId, session.user.id)));
+    .where(and(eq(tags.id, id), eq(tags.userId, userId)));
 
   revalidatePath("/tags");
   revalidatePath("/companies");
 }
 
 export async function deleteTag(id: string) {
-  const session = await getSession();
+  const userId = await getSession();
 
   await db
     .delete(tags)
-    .where(and(eq(tags.id, id), eq(tags.userId, session.user.id)));
+    .where(and(eq(tags.id, id), eq(tags.userId, userId)));
 
   revalidatePath("/tags");
   revalidatePath("/companies");
