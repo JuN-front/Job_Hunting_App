@@ -2,12 +2,13 @@
   "version": "7",
   "dialect": "postgresql",
   "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1714000000000,
-      "tag": "0000_initial",
-      "breakpoints": true
-    }
+    { "idx": 0, "version": "7", "when": 1714000000000, "tag": "0000_create_users", "breakpoints": true },
+    { "idx": 1, "version": "7", "when": 1714000000001, "tag": "0001_create_accounts", "breakpoints": true },
+    { "idx": 2, "version": "7", "when": 1714000000002, "tag": "0002_create_sessions", "breakpoints": true },
+    { "idx": 3, "version": "7", "when": 1714000000003, "tag": "0003_create_verification_tokens", "breakpoints": true },
+    { "idx": 4, "version": "7", "when": 1714000000004, "tag": "0004_create_companies", "breakpoints": true },
+    { "idx": 5, "version": "7", "when": 1714000000005, "tag": "0005_create_tags", "breakpoints": true },
+    { "idx": 6, "version": "7", "when": 1714000000006, "tag": "0006_create_company_tags", "breakpoints": true },
+    { "idx": 7, "version": "7", "when": 1714000000007, "tag": "0007_create_memos", "breakpoints": true }
   ]
 }
