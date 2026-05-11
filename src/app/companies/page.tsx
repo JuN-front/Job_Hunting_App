@@ -1,7 +1,7 @@
 import { db } from "@/db";
-import { companies, tags, companyTags } from "@/db/schema";
+import { companies, tags } from "@/db/schema";
 import { auth } from "@/auth";
-import { eq, and, ilike } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { COMPANY_STATUSES } from "@/db/schema";
 
@@ -18,10 +18,11 @@ const statusColors: Record<string, string> = {
 };
 
 type Props = {
-  searchParams: { status?: string; tagId?: string; q?: string };
+  searchParams: Promise<{ status?: string; tagId?: string; q?: string }>;
 };
 
 export default async function CompaniesPage({ searchParams }: Props) {
+  const { status, tagId, q } = await searchParams;
   const session = await auth();
   const userId = session!.user.id;
 
@@ -33,11 +34,10 @@ export default async function CompaniesPage({ searchParams }: Props) {
 
   const userTags = await db.query.tags.findMany({ where: eq(tags.userId, userId) });
 
-  // クライアントサイドフィルタ（シンプル実装）
   const filtered = allCompanies.filter((c) => {
-    if (searchParams.status && c.status !== searchParams.status) return false;
-    if (searchParams.tagId && !c.companyTags.some((ct) => ct.tagId === searchParams.tagId)) return false;
-    if (searchParams.q && !c.name.toLowerCase().includes(searchParams.q.toLowerCase())) return false;
+    if (status && c.status !== status) return false;
+    if (tagId && !c.companyTags.some((ct) => ct.tagId === tagId)) return false;
+    if (q && !c.name.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
   });
 
@@ -53,18 +53,17 @@ export default async function CompaniesPage({ searchParams }: Props) {
         </Link>
       </div>
 
-      {/* フィルタ */}
       <div className="bg-white border border-gray-200 rounded-xl p-4 mb-5 flex flex-wrap gap-3">
         <form className="flex gap-2 flex-wrap w-full">
           <input
             name="q"
-            defaultValue={searchParams.q}
+            defaultValue={q}
             placeholder="企業名で検索..."
             className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm flex-1 min-w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <select
             name="status"
-            defaultValue={searchParams.status ?? ""}
+            defaultValue={status ?? ""}
             className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">すべてのステータス</option>
@@ -72,7 +71,7 @@ export default async function CompaniesPage({ searchParams }: Props) {
           </select>
           <select
             name="tagId"
-            defaultValue={searchParams.tagId ?? ""}
+            defaultValue={tagId ?? ""}
             className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">すべてのタグ</option>
@@ -90,7 +89,6 @@ export default async function CompaniesPage({ searchParams }: Props) {
         </form>
       </div>
 
-      {/* 一覧 */}
       {filtered.length === 0 ? (
         <div className="text-center py-16 text-gray-400 text-sm">
           条件に一致する企業はありません
