@@ -12,15 +12,17 @@ const PRESET_COLORS = [
 
 export default async function TagsPage() {
   const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+  const userId = session.user.id as string;
+
   const userTags = await db.query.tags.findMany({
-    where: eq(tags.userId, session!.user.id),
+    where: eq(tags.userId, userId),
   });
 
   return (
     <div className="max-w-xl">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">タグ管理</h1>
 
-      {/* タグ作成フォーム */}
       <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6">
         <h2 className="text-sm font-semibold text-gray-700 mb-4">新しいタグを作成</h2>
         <form action={createTag} className="space-y-4">
@@ -54,7 +56,6 @@ export default async function TagsPage() {
         </form>
       </div>
 
-      {/* タグ一覧 */}
       <div>
         <h2 className="text-sm font-semibold text-gray-700 mb-3">作成済みタグ ({userTags.length})</h2>
         {userTags.length === 0 ? (
