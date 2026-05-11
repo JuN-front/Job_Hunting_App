@@ -8,7 +8,10 @@ import Link from "next/link";
 
 export default async function NewCompanyPage() {
   const session = await auth();
-  const userTags = await db.query.tags.findMany({ where: eq(tags.userId, session!.user.id) });
+  if (!session?.user?.id) throw new Error("Unauthorized");
+  const userId = session.user.id as string;
+
+  const userTags = await db.query.tags.findMany({ where: eq(tags.userId, userId) });
 
   return (
     <div className="max-w-xl">
