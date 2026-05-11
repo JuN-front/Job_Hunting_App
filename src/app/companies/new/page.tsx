@@ -8,8 +8,7 @@ import Link from "next/link";
 
 export default async function NewCompanyPage() {
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
-  const userId = session.user.id as string;
+  const userId = session!.user.id;
 
   const userTags = await db.query.tags.findMany({ where: eq(tags.userId, userId) });
 

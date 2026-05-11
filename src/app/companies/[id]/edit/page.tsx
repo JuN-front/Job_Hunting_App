@@ -12,8 +12,7 @@ type Props = { params: Promise<{ id: string }> };
 export default async function EditCompanyPage({ params }: Props) {
   const { id } = await params;
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
-  const userId = session.user.id as string;
+  const userId = session!.user.id;
 
   const company = await db.query.companies.findFirst({
     where: and(eq(companies.id, id), eq(companies.userId, userId)),

@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache";
 async function getSession() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  return session.user.id as string;
+  return session.user.id;
 }
 
 export async function createTag(formData: FormData) {

@@ -11,7 +11,7 @@ import type { CompanyStatus } from "@/db/schema";
 async function getSession() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  return session.user.id as string;
+  return session.user.id;
 }
 
 export async function createCompany(formData: FormData) {

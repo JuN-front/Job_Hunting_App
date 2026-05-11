@@ -19,18 +19,12 @@ const statusColors: Record<string, string> = {
 
 export default async function DashboardPage() {
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
-  const userId = session.user.id as string;
+  const userId = session!.user.id;
 
   const allCompanies = await db.query.companies.findMany({
     where: eq(companies.userId, userId),
     orderBy: (c, { desc }) => [desc(c.updatedAt)],
   });
-
-  const statusCounts = COMPANY_STATUSES.map((status) => ({
-    status,
-    count: allCompanies.filter((c) => c.status === status).length,
-  })).filter((s) => s.count > 0);
 
   const recent = allCompanies.slice(0, 8);
 
@@ -49,11 +43,8 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      {/* ステータス集計 */}
       <section className="mb-8">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-          選考状況
-        </h2>
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">選考状況</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {COMPANY_STATUSES.map((status) => {
             const count = allCompanies.filter((c) => c.status === status).length;
@@ -73,11 +64,8 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      {/* 最近の企業 */}
       <section>
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-          最近更新した企業
-        </h2>
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">最近更新した企業</h2>
         {recent.length === 0 ? (
           <div className="bg-white border border-dashed border-gray-300 rounded-xl p-12 text-center">
             <p className="text-gray-400 text-sm">企業がまだ登録されていません</p>
@@ -95,9 +83,7 @@ export default async function DashboardPage() {
               >
                 <div>
                   <div className="font-medium text-gray-900 text-sm">{company.name}</div>
-                  {company.industry && (
-                    <div className="text-xs text-gray-400 mt-0.5">{company.industry}</div>
-                  )}
+                  {company.industry && <div className="text-xs text-gray-400 mt-0.5">{company.industry}</div>}
                 </div>
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${statusColors[company.status]}`}>
                   {company.status}

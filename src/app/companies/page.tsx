@@ -24,8 +24,7 @@ type Props = {
 export default async function CompaniesPage({ searchParams }: Props) {
   const { status, tagId, q } = await searchParams;
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
-  const userId = session.user.id as string;
+  const userId = session!.user.id;
 
   const allCompanies = await db.query.companies.findMany({
     where: eq(companies.userId, userId),
