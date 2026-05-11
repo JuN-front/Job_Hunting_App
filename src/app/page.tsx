@@ -19,7 +19,8 @@ const statusColors: Record<string, string> = {
 
 export default async function DashboardPage() {
   const session = await auth();
-  const userId = session!.user.id;
+  if (!session?.user?.id) throw new Error("Unauthorized");
+  const userId = session.user.id as string;
 
   const allCompanies = await db.query.companies.findMany({
     where: eq(companies.userId, userId),
