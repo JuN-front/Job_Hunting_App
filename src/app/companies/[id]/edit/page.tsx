@@ -7,14 +7,15 @@ import { updateCompany } from "@/actions/companies";
 import { COMPANY_STATUSES } from "@/db/schema";
 import Link from "next/link";
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
 export default async function EditCompanyPage({ params }: Props) {
+  const { id } = await params;
   const session = await auth();
   const userId = session!.user.id;
 
   const company = await db.query.companies.findFirst({
-    where: and(eq(companies.id, params.id), eq(companies.userId, userId)),
+    where: and(eq(companies.id, id), eq(companies.userId, userId)),
     with: { companyTags: true },
   });
 

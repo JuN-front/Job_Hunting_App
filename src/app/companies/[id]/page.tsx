@@ -19,22 +19,15 @@ const statusColors: Record<string, string> = {
   不合格: "bg-red-100 text-red-700",
 };
 
-const TEMPLATE_DEFAULTS: Record<string, string> = {
-  企業研究: `## 事業内容\n\n## 強み・特徴\n\n## 志望理由\n\n## 懸念点・確認したいこと\n`,
-  面接メモ: `## 面接日時\n\n## 面接形式\n例: 個人 / 集団 / オンライン\n\n## 質問と回答\nQ:\nA:\n\n## 感想・反省\n\n## 次回に向けての準備\n`,
-  "ES・書類": `## 設問と回答\n\n### 設問1\nQ:\nA:\n\n## 提出期限\n\n## 提出状況\n`,
-  "OB/OG訪問": `## 訪問日時・場所\n\n## 訪問者プロフィール\n\n## 聞いた内容\n\n## 感想・学び\n`,
-  自由メモ: "",
-};
-
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
 export default async function CompanyDetailPage({ params }: Props) {
+  const { id } = await params;
   const session = await auth();
   const userId = session!.user.id;
 
   const company = await db.query.companies.findFirst({
-    where: and(eq(companies.id, params.id), eq(companies.userId, userId)),
+    where: and(eq(companies.id, id), eq(companies.userId, userId)),
     with: {
       companyTags: { with: { tag: true } },
       memos: { orderBy: (m, { desc }) => [desc(m.updatedAt)] },
@@ -47,7 +40,6 @@ export default async function CompanyDetailPage({ params }: Props) {
 
   return (
     <div className="max-w-2xl">
-      {/* ヘッダー */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <Link href="/companies" className="text-sm text-gray-400 hover:text-gray-600">← 企業一覧</Link>
@@ -62,10 +54,7 @@ export default async function CompanyDetailPage({ params }: Props) {
           </div>
         </div>
         <div className="flex gap-2">
-          <Link
-            href={`/companies/${company.id}/edit`}
-            className="text-sm border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          <Link href={`/companies/${company.id}/edit`} className="text-sm border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
             編集
           </Link>
           <form action={deleteCompany.bind(null, company.id)}>
@@ -76,7 +65,6 @@ export default async function CompanyDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* ステータス変更 */}
       <div className="bg-white border border-gray-200 rounded-xl p-5 mb-5">
         <h2 className="text-sm font-semibold text-gray-700 mb-3">選考ステータス</h2>
         <div className="flex flex-wrap gap-2">
@@ -97,7 +85,6 @@ export default async function CompanyDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* タグ */}
       <div className="bg-white border border-gray-200 rounded-xl p-5 mb-5">
         <h2 className="text-sm font-semibold text-gray-700 mb-3">タグ</h2>
         <div className="flex flex-wrap gap-2">
@@ -105,11 +92,7 @@ export default async function CompanyDetailPage({ params }: Props) {
             <span className="text-sm text-gray-400">タグなし</span>
           ) : (
             company.companyTags.map(({ tag }) => (
-              <span
-                key={tag.id}
-                style={{ background: tag.color + "22", color: tag.color }}
-                className="text-xs font-medium px-2.5 py-1 rounded-full"
-              >
+              <span key={tag.id} style={{ background: tag.color + "22", color: tag.color }} className="text-xs font-medium px-2.5 py-1 rounded-full">
                 {tag.name}
               </span>
             ))
@@ -120,13 +103,9 @@ export default async function CompanyDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* メモ一覧 */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-gray-700">メモ ({company.memos.length})</h2>
-        <Link
-          href={`/companies/${company.id}/memos/new`}
-          className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg transition-colors"
-        >
+        <Link href={`/companies/${company.id}/memos/new`} className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg transition-colors">
           + メモを追加
         </Link>
       </div>
@@ -141,11 +120,7 @@ export default async function CompanyDetailPage({ params }: Props) {
       ) : (
         <div className="space-y-3">
           {company.memos.map((memo) => (
-            <Link
-              key={memo.id}
-              href={`/companies/${company.id}/memos/${memo.id}`}
-              className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-shadow"
-            >
+            <Link key={memo.id} href={`/companies/${company.id}/memos/${memo.id}`} className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
               <div className="flex items-center justify-between mb-1">
                 <span className="font-medium text-sm text-gray-900">{memo.title}</span>
                 <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{memo.templateType}</span>
@@ -156,7 +131,6 @@ export default async function CompanyDetailPage({ params }: Props) {
         </div>
       )}
 
-      {/* 備考 */}
       {company.notes && (
         <div className="mt-5 bg-white border border-gray-200 rounded-xl p-5">
           <h2 className="text-sm font-semibold text-gray-700 mb-2">備考</h2>

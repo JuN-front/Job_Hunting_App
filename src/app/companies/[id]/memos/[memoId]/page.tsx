@@ -6,29 +6,30 @@ import { notFound } from "next/navigation";
 import { updateMemo, deleteMemo } from "@/actions/memos";
 import Link from "next/link";
 
-type Props = { params: { id: string; memoId: string } };
+type Props = { params: Promise<{ id: string; memoId: string }> };
 
 export default async function MemoPage({ params }: Props) {
+  const { id, memoId } = await params;
   const session = await auth();
   const userId = session!.user.id;
 
   const company = await db.query.companies.findFirst({
-    where: and(eq(companies.id, params.id), eq(companies.userId, userId)),
+    where: and(eq(companies.id, id), eq(companies.userId, userId)),
   });
   if (!company) notFound();
 
   const memo = await db.query.memos.findFirst({
-    where: and(eq(memos.id, params.memoId), eq(memos.companyId, params.id)),
+    where: and(eq(memos.id, memoId), eq(memos.companyId, id)),
   });
   if (!memo) notFound();
 
-  const updateAction = updateMemo.bind(null, memo.id, params.id);
-  const deleteAction = deleteMemo.bind(null, memo.id, params.id);
+  const updateAction = updateMemo.bind(null, memo.id, id);
+  const deleteAction = deleteMemo.bind(null, memo.id, id);
 
   return (
     <div className="max-w-2xl">
       <div className="flex items-center gap-3 mb-6">
-        <Link href={`/companies/${params.id}`} className="text-gray-400 hover:text-gray-600">← {company.name}</Link>
+        <Link href={`/companies/${id}`} className="text-gray-400 hover:text-gray-600">← {company.name}</Link>
       </div>
 
       <form action={updateAction} className="bg-white border border-gray-200 rounded-xl p-6 space-y-5">
@@ -53,7 +54,7 @@ export default async function MemoPage({ params }: Props) {
           <button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg text-sm transition-colors">
             保存する
           </button>
-          <Link href={`/companies/${params.id}`} className="flex-1 text-center border border-gray-300 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+          <Link href={`/companies/${id}`} className="flex-1 text-center border border-gray-300 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
             戻る
           </Link>
         </div>

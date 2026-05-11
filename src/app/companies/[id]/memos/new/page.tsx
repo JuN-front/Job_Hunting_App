@@ -10,15 +10,16 @@ const TEMPLATE_DEFAULTS: Record<string, string> = {
   自由メモ: "",
 };
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
-export default function NewMemoPage({ params }: Props) {
-  const action = createMemo.bind(null, params.id);
+export default async function NewMemoPage({ params }: Props) {
+  const { id } = await params;
+  const action = createMemo.bind(null, id);
 
   return (
     <div className="max-w-2xl">
       <div className="flex items-center gap-3 mb-6">
-        <Link href={`/companies/${params.id}`} className="text-gray-400 hover:text-gray-600">←</Link>
+        <Link href={`/companies/${id}`} className="text-gray-400 hover:text-gray-600">←</Link>
         <h1 className="text-2xl font-bold text-gray-900">メモを追加</h1>
       </div>
 
@@ -44,25 +45,19 @@ export default function NewMemoPage({ params }: Props) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">内容</label>
-          <textarea
-            name="content"
-            rows={16}
-            placeholder="テンプレートを選択すると、対応する書式が自動入力されます（JavaScriptが必要）"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono resize-y"
-          />
+          <textarea name="content" rows={16} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono resize-y" />
         </div>
 
         <div className="flex gap-3">
           <button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg text-sm transition-colors">
             保存する
           </button>
-          <Link href={`/companies/${params.id}`} className="flex-1 text-center border border-gray-300 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+          <Link href={`/companies/${id}`} className="flex-1 text-center border border-gray-300 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
             キャンセル
           </Link>
         </div>
       </form>
 
-      {/* テンプレート自動挿入スクリプト */}
       <script dangerouslySetInnerHTML={{ __html: `
         const defaults = ${JSON.stringify(TEMPLATE_DEFAULTS)};
         document.querySelectorAll('input[name="templateType"]').forEach(radio => {
