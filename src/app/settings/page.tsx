@@ -24,7 +24,7 @@ export default function SettingsPage() {
     formData.append("logoBase64", logoPreview);
     await updateLogo(formData);
     setUploading(false);
-    alert("ロゴを更新しました！");
+    alert("ロゴを更新したぞい！");
   }
 
   return (
@@ -72,7 +72,7 @@ export default function SettingsPage() {
 
       {/* 退会 */}
       <div style={{ background: "var(--bg-2)", border: "1px solid rgba(248,113,113,0.2)", borderRadius: "14px", padding: "22px" }}>
-        <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--red)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "8px" }}>危険ゾーン</p>
+        <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--red)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "8px" }}>アカウント削除</p>
         <p style={{ fontSize: "13px", color: "var(--text-3)", marginBottom: "16px" }}>
           アカウントを削除すると、すべての企業・メモ・タグが完全に削除されます。この操作は取り消せません。
         </p>
@@ -85,14 +85,14 @@ export default function SettingsPage() {
         ) : (
           <div style={{ background: "rgba(248,113,113,0.08)", borderRadius: "10px", padding: "14px" }}>
             <p style={{ fontSize: "13px", color: "var(--red)", marginBottom: "12px", fontWeight: "500" }}>
-              本当に削除しますか？この操作は取り消せません。
+              本当に削除しますか？
             </p>
             <div style={{ display: "flex", gap: "8px" }}>
               <form action={deleteAccount}>
                 <button type="submit" style={{
                   padding: "7px 16px", borderRadius: "7px", fontSize: "13px", fontWeight: "600",
                   border: "none", background: "var(--red)", color: "white", cursor: "pointer",
-                }}>はい、削除する</button>
+                }}>削除</button>
               </form>
               <button onClick={() => setDeleteConfirm(false)} style={{
                 padding: "7px 16px", borderRadius: "7px", fontSize: "13px",
