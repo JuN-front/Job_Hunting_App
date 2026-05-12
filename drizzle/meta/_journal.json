@@ -10,6 +10,7 @@
     { "idx": 5, "version": "7", "when": 1714000000005, "tag": "0005_create_tags", "breakpoints": true },
     { "idx": 6, "version": "7", "when": 1714000000006, "tag": "0006_create_company_tags", "breakpoints": true },
     { "idx": 7, "version": "7", "when": 1714000000007, "tag": "0007_create_memos", "breakpoints": true },
-    { "idx": 8, "version": "7", "when": 1714000000008, "tag": "0008_add_email_verified", "breakpoints": true }
+    { "idx": 8, "version": "7", "when": 1714000000008, "tag": "0008_add_email_verified", "breakpoints": true },
+    { "idx": 9, "version": "7", "when": 1714000000009, "tag": "0009_update_schema", "breakpoints": true }
   ]
 }

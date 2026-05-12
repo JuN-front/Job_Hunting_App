@@ -14,27 +14,31 @@ async function getSession() {
   return session.user.id;
 }
 
+function extractCompanyFields(formData: FormData) {
+  return {
+    name: formData.get("name") as string,
+    status: (formData.get("status") as CompanyStatus) ?? "説明会",
+    industry: (formData.get("industry") as string) || null,
+    url: (formData.get("url") as string) || null,
+    recruitUrl: (formData.get("recruitUrl") as string) || null,
+    mypageUrl: (formData.get("mypageUrl") as string) || null,
+    strengths: (formData.get("strengths") as string) || null,
+    customers: (formData.get("customers") as string) || null,
+    competitors: (formData.get("competitors") as string) || null,
+    notes: (formData.get("notes") as string) || null,
+  };
+}
+
 export async function createCompany(formData: FormData) {
   const userId = await getSession();
+  const fields = extractCompanyFields(formData);
+  if (!fields.name) throw new Error("企業名は必須です");
 
-  const name = formData.get("name") as string;
-  const status = (formData.get("status") as CompanyStatus) ?? "説明会";
-  const industry = (formData.get("industry") as string) || null;
-  const url = (formData.get("url") as string) || null;
-  const notes = (formData.get("notes") as string) || null;
-
-  if (!name) throw new Error("企業名は必須です");
-
-  const [company] = await db
-    .insert(companies)
-    .values({ userId, name, status, industry, url, notes })
-    .returning();
+  const [company] = await db.insert(companies).values({ userId, ...fields }).returning();
 
   const tagIds = formData.getAll("tagIds") as string[];
   if (tagIds.length > 0) {
-    await db.insert(companyTags).values(
-      tagIds.map((tagId) => ({ companyId: company.id, tagId }))
-    );
+    await db.insert(companyTags).values(tagIds.map(tagId => ({ companyId: company.id, tagId })));
   }
 
   revalidatePath("/companies");
@@ -43,35 +47,26 @@ export async function createCompany(formData: FormData) {
 
 export async function updateCompany(id: string, formData: FormData) {
   const userId = await getSession();
+  const fields = extractCompanyFields(formData);
 
-  const name = formData.get("name") as string;
-  const status = formData.get("status") as CompanyStatus;
-  const industry = (formData.get("industry") as string) || null;
-  const url = (formData.get("url") as string) || null;
-  const notes = (formData.get("notes") as string) || null;
-
-  await db
-    .update(companies)
-    .set({ name, status, industry, url, notes, updatedAt: new Date() })
+  await db.update(companies)
+    .set({ ...fields, updatedAt: new Date() })
     .where(and(eq(companies.id, id), eq(companies.userId, userId)));
 
   await db.delete(companyTags).where(eq(companyTags.companyId, id));
   const tagIds = formData.getAll("tagIds") as string[];
   if (tagIds.length > 0) {
-    await db.insert(companyTags).values(
-      tagIds.map((tagId) => ({ companyId: id, tagId }))
-    );
+    await db.insert(companyTags).values(tagIds.map(tagId => ({ companyId: id, tagId })));
   }
 
   revalidatePath(`/companies/${id}`);
   revalidatePath("/companies");
+  redirect(`/companies/${id}`);
 }
 
 export async function updateCompanyStatus(id: string, status: CompanyStatus) {
   const userId = await getSession();
-
-  await db
-    .update(companies)
+  await db.update(companies)
     .set({ status, updatedAt: new Date() })
     .where(and(eq(companies.id, id), eq(companies.userId, userId)));
 
@@ -81,11 +76,7 @@ export async function updateCompanyStatus(id: string, status: CompanyStatus) {
 
 export async function deleteCompany(id: string) {
   const userId = await getSession();
-
-  await db
-    .delete(companies)
-    .where(and(eq(companies.id, id), eq(companies.userId, userId)));
-
+  await db.delete(companies).where(and(eq(companies.id, id), eq(companies.userId, userId)));
   revalidatePath("/companies");
   redirect("/companies");
 }

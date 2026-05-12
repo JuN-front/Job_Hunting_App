@@ -8,10 +8,11 @@ const navItems = [
   { href: "/", label: "ダッシュボード", icon: "⬡" },
   { href: "/companies", label: "企業一覧", icon: "◈" },
   { href: "/tags", label: "タグ管理", icon: "◇" },
+  { href: "/settings", label: "設定", icon: "⚙" },
 ];
 
 type Props = {
-  user: { name?: string | null; email?: string | null };
+  user: { name?: string | null; email?: string | null; logoBase64?: string | null };
 };
 
 export default function Sidebar({ user }: Props) {
@@ -19,27 +20,27 @@ export default function Sidebar({ user }: Props) {
 
   return (
     <aside style={{
-      width: "220px",
-      background: "var(--bg-2)",
-      borderRight: "1px solid var(--border)",
-      display: "flex",
-      flexDirection: "column",
-      flexShrink: 0,
+      width: "220px", background: "var(--bg-2)", borderRight: "1px solid var(--border)",
+      display: "flex", flexDirection: "column", flexShrink: 0,
     }}>
       {/* Logo */}
       <div style={{ padding: "20px 16px 16px", borderBottom: "1px solid var(--border)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
           <div style={{
-            width: "24px", height: "24px", borderRadius: "6px",
-            background: "linear-gradient(135deg, var(--accent), var(--cyan))",
+            width: "28px", height: "28px", borderRadius: "7px", overflow: "hidden", flexShrink: 0,
+            background: user.logoBase64 ? "transparent" : "linear-gradient(135deg, var(--accent), var(--cyan))",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "12px", fontWeight: "700", color: "white",
-          }}>J</div>
+          }}>
+            {user.logoBase64
+              ? <img src={user.logoBase64} alt="logo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              : <span style={{ fontSize: "14px", fontWeight: "700", color: "white" }}>J</span>
+            }
+          </div>
           <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text)", letterSpacing: "-0.3px" }}>
             就活トラッカー
           </span>
         </div>
-        <p style={{ fontSize: "11px", color: "var(--text-3)", marginLeft: "32px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <p style={{ fontSize: "11px", color: "var(--text-3)", marginLeft: "36px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {user.email}
         </p>
       </div>
@@ -59,12 +60,7 @@ export default function Sidebar({ user }: Props) {
             }}>
               <span style={{ fontSize: "14px", opacity: isActive ? 1 : 0.6 }}>{item.icon}</span>
               {item.label}
-              {isActive && (
-                <span style={{
-                  marginLeft: "auto", width: "5px", height: "5px", borderRadius: "50%",
-                  background: "var(--accent)",
-                }} />
-              )}
+              {isActive && <span style={{ marginLeft: "auto", width: "5px", height: "5px", borderRadius: "50%", background: "var(--accent)" }} />}
             </Link>
           );
         })}
@@ -76,12 +72,8 @@ export default function Sidebar({ user }: Props) {
           <button type="submit" style={{
             width: "100%", display: "flex", alignItems: "center", gap: "8px",
             padding: "7px 10px", borderRadius: "7px", fontSize: "13px",
-            color: "var(--text-3)", background: "none", border: "none",
-            cursor: "pointer", textAlign: "left", transition: "all 0.15s",
-          }}
-          onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--red)"; (e.currentTarget as HTMLButtonElement).style.background = "rgba(248,113,113,0.08)"; }}
-          onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--text-3)"; (e.currentTarget as HTMLButtonElement).style.background = "none"; }}
-          >
+            color: "var(--text-3)", background: "none", border: "none", cursor: "pointer",
+          }}>
             <span style={{ fontSize: "14px" }}>↪</span> ログアウト
           </button>
         </form>
