@@ -53,6 +53,7 @@ export const verificationTokens = pgTable("verification_tokens", {
 // ─── Companies ───────────────────────────────────────────────────────────────
 export const COMPANY_STATUSES = [
   "説明会",
+  "IS参加",
   "ES提出",
   "一次面接/カジュアル面談",
   "二次面接",
