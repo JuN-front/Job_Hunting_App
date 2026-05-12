@@ -4,7 +4,6 @@ import {
   timestamp,
   uuid,
   primaryKey,
-  jsonb,
   integer,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
@@ -13,6 +12,7 @@ import { relations } from "drizzle-orm";
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").unique().notNull(),
+  emailVerified: timestamp("email_verified", { mode: "date" }),
   passwordHash: text("password_hash"),
   name: text("name"),
   image: text("image"),
