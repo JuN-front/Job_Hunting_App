@@ -7,16 +7,16 @@ import Link from "next/link";
 import { deleteCompany, updateCompanyStatus } from "@/actions/companies";
 import { COMPANY_STATUSES } from "@/db/schema";
 
-const statusColors: Record<string, string> = {
-  説明会: "bg-gray-100 text-gray-600",
-  ES提出: "bg-blue-100 text-blue-700",
-  一次面接: "bg-cyan-100 text-cyan-700",
-  二次面接: "bg-indigo-100 text-indigo-700",
-  最終面接: "bg-purple-100 text-purple-700",
-  内定: "bg-green-100 text-green-700",
-  入社予定: "bg-emerald-100 text-emerald-700",
-  辞退: "bg-orange-100 text-orange-700",
-  不合格: "bg-red-100 text-red-700",
+const statusConfig: Record<string, { color: string; bg: string }> = {
+  説明会:   { color: "#9399a8", bg: "rgba(147,153,168,0.12)" },
+  ES提出:   { color: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
+  一次面接: { color: "#22d3ee", bg: "rgba(34,211,238,0.12)" },
+  二次面接: { color: "#a78bfa", bg: "rgba(167,139,250,0.12)" },
+  最終面接: { color: "#f472b6", bg: "rgba(244,114,182,0.12)" },
+  内定:     { color: "#34d399", bg: "rgba(52,211,153,0.15)" },
+  入社予定: { color: "#34d399", bg: "rgba(52,211,153,0.2)" },
+  辞退:     { color: "#fb923c", bg: "rgba(251,146,60,0.12)" },
+  不合格:   { color: "#f87171", bg: "rgba(248,113,113,0.12)" },
 };
 
 type Props = { params: Promise<{ id: string }> };
@@ -36,105 +36,129 @@ export default async function CompanyDetailPage({ params }: Props) {
 
   if (!company) notFound();
 
-  const userTags = await db.query.tags.findMany({ where: eq(tags.userId, userId) });
+  const cfg = statusConfig[company.status];
 
   return (
-    <div className="max-w-2xl">
-      <div className="flex items-start justify-between mb-6">
+    <div style={{ maxWidth: "640px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "24px" }}>
         <div>
-          <Link href="/companies" className="text-sm text-gray-400 hover:text-gray-600">← 企業一覧</Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-1">{company.name}</h1>
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
-            {company.industry && <span className="text-sm text-gray-500">{company.industry}</span>}
+          <Link href="/companies" style={{ fontSize: "12px", color: "var(--text-3)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "8px" }}>
+            ← 企業一覧
+          </Link>
+          <h1 style={{ fontSize: "22px", fontWeight: "600", color: "var(--text)", margin: "0 0 6px", letterSpacing: "-0.4px" }}>{company.name}</h1>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            {company.industry && <span style={{ fontSize: "12px", color: "var(--text-3)" }}>{company.industry}</span>}
             {company.url && (
-              <a href={company.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+              <a href={company.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "var(--accent-2)", textDecoration: "none" }}>
                 公式サイト ↗
               </a>
             )}
           </div>
         </div>
-        <div className="flex gap-2">
-          <Link href={`/companies/${company.id}/edit`} className="text-sm border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
-            編集
-          </Link>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <Link href={`/companies/${company.id}/edit`} style={{
+            padding: "7px 14px", borderRadius: "7px", fontSize: "12px", fontWeight: "500",
+            border: "1px solid var(--border-2)", color: "var(--text-2)", textDecoration: "none",
+            background: "var(--bg-3)",
+          }}>編集</Link>
           <form action={deleteCompany.bind(null, company.id)}>
-            <button type="submit" className="text-sm border border-red-200 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
-              削除
-            </button>
+            <button type="submit" style={{
+              padding: "7px 14px", borderRadius: "7px", fontSize: "12px", fontWeight: "500",
+              border: "1px solid rgba(248,113,113,0.3)", color: "var(--red)",
+              background: "rgba(248,113,113,0.08)", cursor: "pointer",
+            }}>削除</button>
           </form>
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-5">
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">選考ステータス</h2>
-        <div className="flex flex-wrap gap-2">
-          {COMPANY_STATUSES.map((status) => (
-            <form key={status} action={updateCompanyStatus.bind(null, company.id, status)}>
-              <button
-                type="submit"
-                className={`text-xs font-medium px-3 py-1.5 rounded-full transition-all border ${
-                  company.status === status
-                    ? `${statusColors[status]} border-current scale-105 shadow-sm`
-                    : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                {status}
-              </button>
-            </form>
-          ))}
+      {/* Status */}
+      <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "18px 20px", marginBottom: "12px" }}>
+        <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "12px" }}>選考ステータス</p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+          {COMPANY_STATUSES.map((status) => {
+            const c = statusConfig[status];
+            const isActive = company.status === status;
+            return (
+              <form key={status} action={updateCompanyStatus.bind(null, company.id, status)}>
+                <button type="submit" style={{
+                  padding: "5px 12px", borderRadius: "20px", border: "1px solid",
+                  fontSize: "12px", fontWeight: "500", cursor: "pointer", transition: "all 0.15s",
+                  color: isActive ? c.color : "var(--text-3)",
+                  background: isActive ? c.bg : "transparent",
+                  borderColor: isActive ? c.color + "50" : "var(--border)",
+                  transform: isActive ? "scale(1.03)" : "scale(1)",
+                }}>{status}</button>
+              </form>
+            );
+          })}
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-5">
-        <h2 className="text-sm font-semibold text-gray-700 mb-3">タグ</h2>
-        <div className="flex flex-wrap gap-2">
+      {/* Tags */}
+      <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "18px 20px", marginBottom: "12px" }}>
+        <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "10px" }}>タグ</p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", alignItems: "center" }}>
           {company.companyTags.length === 0 ? (
-            <span className="text-sm text-gray-400">タグなし</span>
+            <span style={{ fontSize: "12px", color: "var(--text-3)" }}>タグなし</span>
           ) : (
             company.companyTags.map(({ tag }) => (
-              <span key={tag.id} style={{ background: tag.color + "22", color: tag.color }} className="text-xs font-medium px-2.5 py-1 rounded-full">
+              <span key={tag.id} style={{ fontSize: "12px", fontWeight: "500", padding: "3px 10px", borderRadius: "20px", color: tag.color, background: tag.color + "22" }}>
                 {tag.name}
               </span>
             ))
           )}
-          <Link href={`/companies/${company.id}/edit`} className="text-xs text-gray-400 hover:text-blue-600 underline ml-1">
-            編集
-          </Link>
+          <Link href={`/companies/${company.id}/edit`} style={{ fontSize: "11px", color: "var(--text-3)", textDecoration: "none", marginLeft: "4px" }}>編集</Link>
         </div>
       </div>
 
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-700">メモ ({company.memos.length})</h2>
-        <Link href={`/companies/${company.id}/memos/new`} className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg transition-colors">
-          + メモを追加
-        </Link>
+      {/* Memos */}
+      <div style={{ marginBottom: "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", margin: 0 }}>
+          メモ <span style={{ color: "var(--text-3)", fontWeight: "400" }}>({company.memos.length})</span>
+        </p>
+        <Link href={`/companies/${company.id}/memos/new`} style={{
+          fontSize: "12px", fontWeight: "500", padding: "5px 12px", borderRadius: "7px",
+          background: "var(--bg-4)", border: "1px solid var(--border-2)",
+          color: "var(--text-2)", textDecoration: "none",
+        }}>+ メモを追加</Link>
       </div>
 
       {company.memos.length === 0 ? (
-        <div className="bg-white border border-dashed border-gray-300 rounded-xl p-8 text-center">
-          <p className="text-gray-400 text-sm">メモがまだありません</p>
-          <Link href={`/companies/${company.id}/memos/new`} className="mt-2 inline-block text-blue-600 text-sm hover:underline">
+        <div style={{
+          background: "var(--bg-2)", border: "1px dashed var(--border-2)",
+          borderRadius: "12px", padding: "32px", textAlign: "center",
+        }}>
+          <p style={{ fontSize: "13px", color: "var(--text-3)", marginBottom: "8px" }}>メモがまだありません</p>
+          <Link href={`/companies/${company.id}/memos/new`} style={{ fontSize: "12px", color: "var(--accent-2)", textDecoration: "none" }}>
             最初のメモを作成 →
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
-          {company.memos.map((memo) => (
-            <Link key={memo.id} href={`/companies/${company.id}/memos/${memo.id}`} className="block bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-medium text-sm text-gray-900">{memo.title}</span>
-                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{memo.templateType}</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {company.memos.map(memo => (
+            <Link key={memo.id} href={`/companies/${company.id}/memos/${memo.id}`} style={{
+              display: "block", background: "var(--bg-2)", border: "1px solid var(--border)",
+              borderRadius: "12px", padding: "14px 18px", textDecoration: "none", transition: "border-color 0.15s",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+                <span style={{ fontSize: "13px", fontWeight: "500", color: "var(--text)" }}>{memo.title}</span>
+                <span style={{ fontSize: "11px", color: "var(--text-3)", background: "var(--bg-4)", padding: "2px 8px", borderRadius: "6px" }}>
+                  {memo.templateType}
+                </span>
               </div>
-              <p className="text-xs text-gray-400 line-clamp-2 whitespace-pre-wrap">{memo.content || "（内容なし）"}</p>
+              <p style={{ fontSize: "12px", color: "var(--text-3)", margin: 0, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", whiteSpace: "pre-wrap" }}>
+                {memo.content || "（内容なし）"}
+              </p>
             </Link>
           ))}
         </div>
       )}
 
       {company.notes && (
-        <div className="mt-5 bg-white border border-gray-200 rounded-xl p-5">
-          <h2 className="text-sm font-semibold text-gray-700 mb-2">備考</h2>
-          <p className="text-sm text-gray-600 whitespace-pre-wrap">{company.notes}</p>
+        <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "18px 20px", marginTop: "12px" }}>
+          <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "8px" }}>備考</p>
+          <p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.notes}</p>
         </div>
       )}
     </div>

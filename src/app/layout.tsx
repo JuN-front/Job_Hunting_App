@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { auth } from "@/auth";
 import Sidebar from "@/components/Sidebar";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-  title: "就活管理アプリ",
+  title: "就活トラッカー",
   description: "就職活動の進捗を一元管理",
 };
 
@@ -16,11 +13,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="ja">
-      <body className={inter.className}>
+      <body>
         {session?.user ? (
-          <div className="flex h-screen bg-gray-50">
+          <div style={{ display: "flex", height: "100vh", background: "var(--bg)", overflow: "hidden" }}>
             <Sidebar user={{ name: session.user.name, email: session.user.email }} />
-            <main className="flex-1 overflow-y-auto p-8">{children}</main>
+            <main style={{ flex: 1, overflowY: "auto", padding: "36px 40px" }}>
+              {children}
+            </main>
           </div>
         ) : (
           <main>{children}</main>

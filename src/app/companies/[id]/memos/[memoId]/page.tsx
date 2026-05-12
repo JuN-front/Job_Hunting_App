@@ -27,36 +27,55 @@ export default async function MemoPage({ params }: Props) {
   const deleteAction = deleteMemo.bind(null, memo.id, id);
 
   return (
-    <div className="max-w-2xl">
-      <div className="flex items-center gap-3 mb-6">
-        <Link href={`/companies/${id}`} className="text-gray-400 hover:text-gray-600">← {company.name}</Link>
+    <div style={{ maxWidth: "640px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "28px" }}>
+        <Link href={`/companies/${id}`} style={{ fontSize: "18px", color: "var(--text-3)", textDecoration: "none" }}>←</Link>
+        <span style={{ fontSize: "13px", color: "var(--text-3)" }}>{company.name}</span>
       </div>
 
-      <form action={updateAction} className="bg-white border border-gray-200 rounded-xl p-6 space-y-5">
-        <div className="flex items-center justify-between">
-          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{memo.templateType}</span>
+      <form action={updateAction} style={{
+        background: "var(--bg-2)", border: "1px solid var(--border)",
+        borderRadius: "14px", padding: "24px", display: "flex", flexDirection: "column", gap: "18px",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontSize: "11px", color: "var(--text-3)", background: "var(--bg-4)", padding: "3px 10px", borderRadius: "6px" }}>
+            {memo.templateType}
+          </span>
           <form action={deleteAction}>
-            <button type="submit" className="text-xs text-red-500 hover:underline">削除</button>
+            <button type="submit" style={{
+              fontSize: "12px", color: "var(--red)", background: "none", border: "none", cursor: "pointer",
+            }}>削除</button>
           </form>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">タイトル</label>
-          <input name="title" required defaultValue={memo.title} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label style={{ display: "block", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", marginBottom: "6px" }}>タイトル</label>
+          <input name="title" required defaultValue={memo.title} style={{
+            width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
+            borderRadius: "8px", padding: "9px 12px", fontSize: "13px", color: "var(--text)", outline: "none",
+          }} />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">内容</label>
-          <textarea name="content" rows={20} defaultValue={memo.content} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono resize-y" />
+          <label style={{ display: "block", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", marginBottom: "6px" }}>内容</label>
+          <textarea name="content" rows={22} defaultValue={memo.content} style={{
+            width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
+            borderRadius: "8px", padding: "12px", fontSize: "13px", color: "var(--text)",
+            outline: "none", resize: "vertical", fontFamily: "'DM Mono', monospace", lineHeight: "1.6",
+          }} />
         </div>
 
-        <div className="flex gap-3">
-          <button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg text-sm transition-colors">
-            保存する
-          </button>
-          <Link href={`/companies/${id}`} className="flex-1 text-center border border-gray-300 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
-            戻る
-          </Link>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button type="submit" style={{
+            flex: 1, padding: "10px", borderRadius: "8px", border: "none",
+            background: "linear-gradient(135deg, var(--accent), #6457e8)",
+            color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer",
+          }}>保存する</button>
+          <Link href={`/companies/${id}`} style={{
+            flex: 1, padding: "10px", borderRadius: "8px", textAlign: "center",
+            border: "1px solid var(--border-2)", color: "var(--text-2)", fontSize: "13px", textDecoration: "none",
+            background: "var(--bg-3)",
+          }}>戻る</Link>
         </div>
       </form>
     </div>
