@@ -3,6 +3,18 @@
 import { login } from "@/actions/auth";
 import Link from "next/link";
 
+const LogoIcon = () => (
+  <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="52" height="52" rx="14" fill="#13151a"/>
+    <circle cx="26" cy="26" r="14" fill="none" stroke="#7c6af7" strokeWidth="1.5" opacity="0.35"/>
+    <circle cx="26" cy="26" r="9.5" fill="none" stroke="#7c6af7" strokeWidth="1.5" opacity="0.6"/>
+    <circle cx="26" cy="26" r="5" fill="#7c6af7"/>
+    <circle cx="26" cy="26" r="1.8" fill="white"/>
+    <line x1="29" y1="23" x2="38" y2="14" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round"/>
+    <polyline points="34,14 38,14 38,18" fill="none" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 export default function LoginPage() {
   return (
     <div style={{
@@ -12,16 +24,14 @@ export default function LoginPage() {
     }}>
       <div style={{ width: "100%", maxWidth: "360px" }}>
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
-          <div style={{
-            width: "44px", height: "44px", borderRadius: "12px", margin: "0 auto 12px",
-            background: "linear-gradient(135deg, var(--accent), var(--cyan))",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "20px", fontWeight: "700", color: "white",
-          }}>J</div>
-          <h1 style={{ fontSize: "22px", fontWeight: "600", color: "var(--text)", margin: "0 0 4px", letterSpacing: "-0.5px" }}>
-            おかえりなさい
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "14px" }}>
+            <LogoIcon />
+          </div>
+          <h1 style={{ fontSize: "22px", fontWeight: "600", color: "var(--text)", margin: "0 0 2px", letterSpacing: "-0.5px" }}>
+            ジョブカン
           </h1>
-          <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0 }}>就活トラッカーにログイン</p>
+          <p style={{ fontSize: "11px", color: "var(--text-3)", margin: "0 0 4px", letterSpacing: "2px" }}>JOB HUNTING TRACKER</p>
+          <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0 }}>アカウントにログイン</p>
         </div>
 
         <div style={{

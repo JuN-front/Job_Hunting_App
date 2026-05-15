@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "就活トラッカー",
+  title: "ジョブカン",
   description: "就職活動の進捗を一元管理",
 };
 

@@ -37,7 +37,7 @@ export default function Sidebar({ user }: Props) {
             }
           </div>
           <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text)", letterSpacing: "-0.3px" }}>
-            就活トラッカー
+            ジョブカン
           </span>
         </div>
         <p style={{ fontSize: "11px", color: "var(--text-3)", marginLeft: "36px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
