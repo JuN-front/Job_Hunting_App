@@ -22,6 +22,8 @@ function extractCompanyFields(formData: FormData) {
     url: (formData.get("url") as string) || null,
     recruitUrl: (formData.get("recruitUrl") as string) || null,
     mypageUrl: (formData.get("mypageUrl") as string) || null,
+    mypageId: (formData.get("mypageId") as string) || null,
+    mypagePassword: (formData.get("mypagePassword") as string) || null,
     strengths: (formData.get("strengths") as string) || null,
     customers: (formData.get("customers") as string) || null,
     competitors: (formData.get("competitors") as string) || null,

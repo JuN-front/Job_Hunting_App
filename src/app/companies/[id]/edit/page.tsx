@@ -18,6 +18,9 @@ const sectionLabel: React.CSSProperties = {
   fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px",
   textTransform: "uppercase", marginBottom: "12px",
 };
+const hintStyle: React.CSSProperties = {
+  fontSize: "11px", color: "var(--text-3)", marginTop: "4px",
+};
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -78,9 +81,9 @@ export default async function EditCompanyPage({ params }: Props) {
           )}
         </div>
 
-        {/* URL情報 */}
+        {/* URL・マイページ情報 */}
         <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "14px", padding: "20px", display: "flex", flexDirection: "column", gap: "14px" }}>
-          <p style={sectionLabel}>URL情報</p>
+          <p style={sectionLabel}>URL・マイページ情報</p>
           <div>
             <label style={labelStyle}>公式URL</label>
             <input name="url" type="url" defaultValue={company.url ?? ""} placeholder="https://" style={inputStyle} />
@@ -90,8 +93,17 @@ export default async function EditCompanyPage({ params }: Props) {
             <input name="recruitUrl" type="url" defaultValue={company.recruitUrl ?? ""} placeholder="https://" style={inputStyle} />
           </div>
           <div>
-            <label style={labelStyle}>新卒採用マイページ</label>
+            <label style={labelStyle}>新卒採用マイページ URL</label>
             <input name="mypageUrl" type="url" defaultValue={company.mypageUrl ?? ""} placeholder="https://" style={inputStyle} />
+          </div>
+          <div>
+            <label style={labelStyle}>マイページ ID</label>
+            <input name="mypageId" defaultValue={company.mypageId ?? ""} placeholder="例: taro.yamada@example.com" style={inputStyle} />
+          </div>
+          <div>
+            <label style={labelStyle}>マイページ パスワード（メモ）</label>
+            <input name="mypagePassword" type="text" defaultValue={company.mypagePassword ?? ""} placeholder="例: MyPass1234" style={inputStyle} />
+            <p style={hintStyle}>※ 暗号化されずに保存されます。取り扱いにご注意ください。</p>
           </div>
         </div>
 

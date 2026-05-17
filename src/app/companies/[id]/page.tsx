@@ -51,6 +51,7 @@ export default async function CompanyDetailPage({ params }: Props) {
             {company.url && <a href={company.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "var(--accent-2)", textDecoration: "none" }}>公式サイト ↗</a>}
             {company.recruitUrl && <a href={company.recruitUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "var(--cyan)", textDecoration: "none" }}>採用HP ↗</a>}
             {company.mypageUrl && <a href={company.mypageUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "var(--green)", textDecoration: "none" }}>マイページ ↗</a>}
+            {company.mypageId && <span style={{ fontSize: "12px", color: "var(--text-3)" }}>ID: {company.mypageId}</span>}
           </div>
         </div>
         <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>

@@ -75,7 +75,9 @@ export const companies = pgTable("companies", {
   industry: text("industry"),
   url: text("url"),                         // 公式URL
   recruitUrl: text("recruit_url"),          // 新卒採用HP
-  mypageUrl: text("mypage_url"),            // 新卒採用マイページ
+  mypageUrl: text("mypage_url"),
+  mypageId: text("mypage_id"),
+  mypagePassword: text("mypage_password"),            // 新卒採用マイページ
   strengths: text("strengths"),             // 強み
   customers: text("customers"),             // 顧客
   competitors: text("competitors"),         // 競合相手
