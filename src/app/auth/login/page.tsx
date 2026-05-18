@@ -2,6 +2,8 @@
 
 import { login } from "@/actions/auth";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const LogoIcon = () => (
   <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -15,7 +17,10 @@ const LogoIcon = () => (
   </svg>
 );
 
-export default function LoginPage() {
+function LoginContent() {
+  const searchParams = useSearchParams();
+  const resetSuccess = searchParams.get("reset") === "success";
+
   return (
     <div style={{
       minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
@@ -34,6 +39,17 @@ export default function LoginPage() {
           <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0 }}>アカウントにログイン</p>
         </div>
 
+        {/* パスワードリセット成功メッセージ */}
+        {resetSuccess && (
+          <div style={{
+            background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)",
+            borderRadius: "10px", padding: "12px 16px", marginBottom: "16px",
+            fontSize: "13px", color: "var(--green)", textAlign: "center",
+          }}>
+            ✅ パスワードを更新しました。新しいパスワードでログインしてください。
+          </div>
+        )}
+
         <div style={{
           background: "var(--bg-2)", border: "1px solid var(--border)",
           borderRadius: "16px", padding: "28px",
@@ -49,9 +65,14 @@ export default function LoginPage() {
               }} />
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", marginBottom: "6px" }}>
-                パスワード
-              </label>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>
+                  パスワード
+                </label>
+                <Link href="/auth/reset-password" style={{ fontSize: "11px", color: "var(--text-3)", textDecoration: "none" }}>
+                  パスワードを忘れた方はこちら
+                </Link>
+              </div>
               <input name="password" type="password" required placeholder="••••••••" style={{
                 width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
                 borderRadius: "8px", padding: "9px 12px", fontSize: "13px", color: "var(--text)", outline: "none",
@@ -75,5 +96,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   );
 }
