@@ -91,8 +91,9 @@ function LoginContent() {
             </Link>
           </p>
           <p style={{ fontSize: "12px", color: "var(--text-3)", margin: 0 }}>
-            <Link href="/auth/reset-password" style={{ color: "var(--text-3)", textDecoration: "none" }}>
-              パスワードを忘れた方はこちら
+            パスワードを忘れた方は{" "}
+            <Link href="/auth/reset-password" style={{ color: "var(--accent-2)", textDecoration: "none" }}>
+              こちら
             </Link>
           </p>
         </div>
