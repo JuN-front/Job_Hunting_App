@@ -39,7 +39,6 @@ function LoginContent() {
           <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0 }}>アカウントにログイン</p>
         </div>
 
-        {/* パスワードリセット成功メッセージ */}
         {resetSuccess && (
           <div style={{
             background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)",
@@ -65,14 +64,9 @@ function LoginContent() {
               }} />
             </div>
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>
-                  パスワード
-                </label>
-                <Link href="/auth/reset-password" style={{ fontSize: "11px", color: "var(--text-3)", textDecoration: "none" }}>
-                  パスワードを忘れた方はこちら
-                </Link>
-              </div>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", marginBottom: "6px" }}>
+                パスワード
+              </label>
               <input name="password" type="password" required placeholder="••••••••" style={{
                 width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
                 borderRadius: "8px", padding: "9px 12px", fontSize: "13px", color: "var(--text)", outline: "none",
@@ -88,12 +82,20 @@ function LoginContent() {
           </form>
         </div>
 
-        <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-3)", marginTop: "20px" }}>
-          アカウントをお持ちでない方は{" "}
-          <Link href="/auth/register" style={{ color: "var(--accent-2)", textDecoration: "none" }}>
-            新規登録
-          </Link>
-        </p>
+        {/* 新規登録・パスワードリセット */}
+        <div style={{ textAlign: "center", marginTop: "20px", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <p style={{ fontSize: "12px", color: "var(--text-3)", margin: 0 }}>
+            アカウントをお持ちでない方は{" "}
+            <Link href="/auth/register" style={{ color: "var(--accent-2)", textDecoration: "none" }}>
+              新規登録
+            </Link>
+          </p>
+          <p style={{ fontSize: "12px", color: "var(--text-3)", margin: 0 }}>
+            <Link href="/auth/reset-password" style={{ color: "var(--text-3)", textDecoration: "none" }}>
+              パスワードを忘れた方はこちら
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
