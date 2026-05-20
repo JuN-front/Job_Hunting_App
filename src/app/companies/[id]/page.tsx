@@ -4,21 +4,20 @@ import { auth } from "@/auth";
 import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { deleteCompany, updateCompanyStatus } from "@/actions/companies";
-import { COMPANY_STATUSES } from "@/db/schema";
+import { deleteCompany } from "@/actions/companies";
 
 const statusConfig: Record<string, { color: string; bg: string }> = {
-  "説明会":   { color: "#9399a8", bg: "rgba(147,153,168,0.12)" },
-  "IS参加":    { color: "#818cf8", bg: "rgba(129,140,248,0.12)" },
-  "ES提出":              { color: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
+  "説明会":                  { color: "#9399a8", bg: "rgba(147,153,168,0.12)" },
+  "IS参加":                  { color: "#818cf8", bg: "rgba(129,140,248,0.12)" },
+  "ES提出":                  { color: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
   "一次面接/カジュアル面談": { color: "#22d3ee", bg: "rgba(34,211,238,0.12)" },
-  "二次面接":            { color: "#a78bfa", bg: "rgba(167,139,250,0.12)" },
-  "三次面接以降":        { color: "#c084fc", bg: "rgba(192,132,252,0.12)" },
-  "最終面接":            { color: "#f472b6", bg: "rgba(244,114,182,0.12)" },
-  "内定":                { color: "#34d399", bg: "rgba(52,211,153,0.15)" },
-  "入社検討候補":        { color: "#34d399", bg: "rgba(52,211,153,0.2)" },
-  "辞退":                { color: "#fb923c", bg: "rgba(251,146,60,0.12)" },
-  "不合格":              { color: "#f87171", bg: "rgba(248,113,113,0.12)" },
+  "二次面接":                { color: "#a78bfa", bg: "rgba(167,139,250,0.12)" },
+  "三次面接以降":            { color: "#c084fc", bg: "rgba(192,132,252,0.12)" },
+  "最終面接":                { color: "#f472b6", bg: "rgba(244,114,182,0.12)" },
+  "内定":                    { color: "#34d399", bg: "rgba(52,211,153,0.15)" },
+  "入社検討候補":            { color: "#34d399", bg: "rgba(52,211,153,0.2)" },
+  "辞退":                    { color: "#fb923c", bg: "rgba(251,146,60,0.12)" },
+  "不合格":                  { color: "#f87171", bg: "rgba(248,113,113,0.12)" },
 };
 
 type Props = { params: Promise<{ id: string }> };
@@ -68,26 +67,19 @@ export default async function CompanyDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Status */}
-      <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "18px 20px", marginBottom: "10px" }}>
-        <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "12px" }}>選考ステータス</p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-          {COMPANY_STATUSES.map(status => {
-            const c = statusConfig[status] ?? { color: "#9399a8", bg: "rgba(147,153,168,0.12)" };
-            const isActive = company.status === status;
-            return (
-              <form key={status} action={updateCompanyStatus.bind(null, company.id, status)}>
-                <button type="submit" style={{
-                  padding: "5px 12px", borderRadius: "20px", border: "1px solid",
-                  fontSize: "12px", fontWeight: "500", cursor: "pointer", transition: "all 0.15s",
-                  color: isActive ? c.color : "var(--text-3)",
-                  background: isActive ? c.bg : "transparent",
-                  borderColor: isActive ? c.color + "50" : "var(--border)",
-                  transform: isActive ? "scale(1.03)" : "scale(1)",
-                }}>{status}</button>
-              </form>
-            );
-          })}
+      {/* ステータス（表示のみ） */}
+      <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "16px 20px", marginBottom: "10px" }}>
+        <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "10px" }}>選考ステータス</p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{
+            fontSize: "13px", fontWeight: "600", padding: "5px 14px", borderRadius: "20px",
+            color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.color}50`,
+          }}>
+            {company.status}
+          </span>
+          <Link href={`/companies/${company.id}/edit`} style={{ fontSize: "11px", color: "var(--text-3)", textDecoration: "none" }}>
+            変更する →
+          </Link>
         </div>
       </div>
 
