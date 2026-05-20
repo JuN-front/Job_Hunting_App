@@ -61,9 +61,8 @@ export async function updateCompany(id: string, formData: FormData) {
     await db.insert(companyTags).values(tagIds.map(tagId => ({ companyId: id, tagId })));
   }
 
-  revalidatePath(`/companies/${id}`);
+  revalidatePath(`/companies/`);
   revalidatePath("/companies");
-  redirect(`/companies/${id}`);
 }
 
 export async function updateCompanyStatus(id: string, status: CompanyStatus) {

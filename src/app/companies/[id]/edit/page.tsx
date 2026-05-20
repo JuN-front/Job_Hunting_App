@@ -1,11 +1,12 @@
-import { db } from "@/db";
-import { companies, tags } from "@/db/schema";
-import { auth } from "@/auth";
-import { eq, and } from "drizzle-orm";
-import { notFound } from "next/navigation";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { updateCompany } from "@/actions/companies";
 import { COMPANY_STATUSES } from "@/db/schema";
 import Link from "next/link";
+import { use } from "react";
+import { db } from "@/db";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
@@ -24,29 +25,45 @@ const hintStyle: React.CSSProperties = {
 
 type Props = { params: Promise<{ id: string }> };
 
-export default async function EditCompanyPage({ params }: Props) {
-  const { id } = await params;
-  const session = await auth();
-  const userId = session!.user.id;
+export default function EditCompanyPage({ params }: Props) {
+  const { id } = use(params);
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
+  const [company, setCompany] = useState<any>(null);
+  const [userTags, setUserTags] = useState<any[]>([]);
+  const [currentTagIds, setCurrentTagIds] = useState<string[]>([]);
 
-  const company = await db.query.companies.findFirst({
-    where: and(eq(companies.id, id), eq(companies.userId, userId)),
-    with: { companyTags: true },
-  });
-  if (!company) notFound();
+  useEffect(() => {
+    fetch(`/api/companies/${id}`)
+      .then(r => r.json())
+      .then(data => {
+        setCompany(data.company);
+        setUserTags(data.userTags);
+        setCurrentTagIds(data.currentTagIds);
+      });
+  }, [id]);
 
-  const userTags = await db.query.tags.findMany({ where: eq(tags.userId, userId) });
-  const currentTagIds = company.companyTags.map(ct => ct.tagId);
-  const action = updateCompany.bind(null, company.id);
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSaving(true);
+    const formData = new FormData(e.currentTarget);
+    await updateCompany(id, formData);
+    router.push(`/companies/${id}`);
+    router.refresh();
+  }
+
+  if (!company) return (
+    <div style={{ color: "var(--text-3)", fontSize: "13px", padding: "40px" }}>読み込み中...</div>
+  );
 
   return (
     <div style={{ maxWidth: "560px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "28px" }}>
-        <Link href={`/companies/${company.id}`} style={{ fontSize: "18px", color: "var(--text-3)", textDecoration: "none" }}>←</Link>
+        <Link href={`/companies/${id}`} style={{ fontSize: "18px", color: "var(--text-3)", textDecoration: "none" }}>←</Link>
         <h1 style={{ fontSize: "20px", fontWeight: "600", color: "var(--text)", margin: 0, letterSpacing: "-0.4px" }}>企業を編集</h1>
       </div>
 
-      <form action={action} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         {/* 基本情報 */}
         <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "14px", padding: "20px", display: "flex", flexDirection: "column", gap: "14px" }}>
           <p style={sectionLabel}>基本情報</p>
@@ -68,7 +85,7 @@ export default async function EditCompanyPage({ params }: Props) {
             <div>
               <label style={labelStyle}>タグ</label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                {userTags.map(tag => (
+                {userTags.map((tag: any) => (
                   <label key={tag.id} style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
                     <input type="checkbox" name="tagIds" value={tag.id} defaultChecked={currentTagIds.includes(tag.id)} style={{ accentColor: tag.color }} />
                     <span style={{ fontSize: "12px", fontWeight: "500", padding: "2px 8px", borderRadius: "20px", color: tag.color, background: tag.color + "22" }}>
@@ -129,12 +146,12 @@ export default async function EditCompanyPage({ params }: Props) {
         </div>
 
         <div style={{ display: "flex", gap: "10px" }}>
-          <button type="submit" style={{
+          <button type="submit" disabled={saving} style={{
             flex: 1, padding: "10px", borderRadius: "8px", border: "none",
-            background: "linear-gradient(135deg, var(--accent), #6457e8)",
-            color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer",
-          }}>保存する</button>
-          <Link href={`/companies/${company.id}`} style={{
+            background: saving ? "var(--bg-4)" : "linear-gradient(135deg, var(--accent), #6457e8)",
+            color: "white", fontSize: "13px", fontWeight: "600", cursor: saving ? "not-allowed" : "pointer",
+          }}>{saving ? "保存中..." : "保存する"}</button>
+          <Link href={`/companies/${id}`} style={{
             flex: 1, padding: "10px", borderRadius: "8px", textAlign: "center",
             border: "1px solid var(--border-2)", color: "var(--text-2)", fontSize: "13px",
             textDecoration: "none", background: "var(--bg-3)",
