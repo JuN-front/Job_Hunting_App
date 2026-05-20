@@ -77,7 +77,11 @@ export default async function CompanyDetailPage({ params }: Props) {
           }}>
             {company.status}
           </span>
-          <Link href={`/companies/${company.id}/edit`} style={{ fontSize: "11px", color: "var(--text-3)", textDecoration: "none" }}>
+          <Link href={`/companies/${company.id}/edit`} style={{
+            fontSize: "11px", fontWeight: "500", padding: "5px 12px", borderRadius: "7px",
+            border: "1px solid var(--border-2)", color: "var(--text-2)",
+            background: "var(--bg-3)", textDecoration: "none",
+          }}>
             変更する →
           </Link>
         </div>
