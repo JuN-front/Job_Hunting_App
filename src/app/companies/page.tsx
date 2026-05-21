@@ -7,7 +7,7 @@ import { COMPANY_STATUSES } from "@/db/schema";
 
 const statusConfig: Record<string, { color: string; bg: string }> = {
   "説明会":   { color: "#9399a8", bg: "rgba(147,153,168,0.12)" },
-  "IS参加":    { color: "#818cf8", bg: "rgba(129,140,248,0.12)" },
+  "IS内定":    { color: "#818cf8", bg: "rgba(129,140,248,0.12)" },
   "ES提出":              { color: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
   "一次面接/カジュアル面談": { color: "#22d3ee", bg: "rgba(34,211,238,0.12)" },
   "二次面接":            { color: "#a78bfa", bg: "rgba(167,139,250,0.12)" },

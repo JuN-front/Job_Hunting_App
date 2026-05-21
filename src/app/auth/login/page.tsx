@@ -1,9 +1,9 @@
 "use client";
 
-import { login } from "@/actions/auth";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
+import Link from "next/link";
 
 const LogoIcon = () => (
   <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -19,7 +19,53 @@ const LogoIcon = () => (
 
 function LoginContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const resetSuccess = searchParams.get("reset") === "success";
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+
+    const formData = new FormData(e.currentTarget);
+    const email = (formData.get("email") as string).trim();
+    const password = (formData.get("password") as string).trim();
+
+    // (ii) 両方未入力
+    if (!email && !password) {
+      setError("メールアドレスとパスワードは必須です");
+      return;
+    }
+    // (iii) どちらかだけ未入力
+    if (!email || !password) {
+      setError("メールアドレスとパスワードは両方入力してください");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { signIn } = await import("next-auth/react");
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        // (iv) 認証失敗
+        setError("メールアドレスまたはパスワードが違います");
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } catch {
+      setError("ログインに失敗しました。もう一度お試しください");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div style={{
@@ -53,36 +99,60 @@ function LoginContent() {
           background: "var(--bg-2)", border: "1px solid var(--border)",
           borderRadius: "16px", padding: "28px",
         }}>
-          <form action={login} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          {error && (
+            <div style={{
+              background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.3)",
+              borderRadius: "8px", padding: "10px 14px", marginBottom: "16px",
+              fontSize: "13px", color: "var(--red)",
+            }}>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
               <label style={{ display: "block", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", marginBottom: "6px" }}>
                 メールアドレス
               </label>
-              <input name="email" type="email" required placeholder="you@example.com" style={{
-                width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
-                borderRadius: "8px", padding: "9px 12px", fontSize: "13px", color: "var(--text)", outline: "none",
-              }} />
+              <input
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                style={{
+                  width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
+                  borderRadius: "8px", padding: "9px 12px", fontSize: "13px", color: "var(--text)", outline: "none",
+                }}
+              />
             </div>
             <div>
               <label style={{ display: "block", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", marginBottom: "6px" }}>
                 パスワード
               </label>
-              <input name="password" type="password" required placeholder="••••••••" style={{
-                width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
-                borderRadius: "8px", padding: "9px 12px", fontSize: "13px", color: "var(--text)", outline: "none",
-              }} />
+              <input
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                style={{
+                  width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
+                  borderRadius: "8px", padding: "9px 12px", fontSize: "13px", color: "var(--text)", outline: "none",
+                }}
+              />
             </div>
-            <button type="submit" style={{
-              width: "100%", padding: "10px", borderRadius: "8px", border: "none",
-              background: "linear-gradient(135deg, var(--accent), #6457e8)",
-              color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer", marginTop: "4px",
-            }}>
-              ログイン
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: "100%", padding: "10px", borderRadius: "8px", border: "none",
+                background: loading ? "var(--bg-4)" : "linear-gradient(135deg, var(--accent), #6457e8)",
+                color: "white", fontSize: "13px", fontWeight: "600",
+                cursor: loading ? "not-allowed" : "pointer", marginTop: "4px",
+              }}
+            >
+              {loading ? "ログイン中..." : "ログイン"}
             </button>
           </form>
         </div>
 
-        {/* 新規登録・パスワードリセット */}
         <div style={{ textAlign: "center", marginTop: "20px", display: "flex", flexDirection: "column", gap: "10px" }}>
           <p style={{ fontSize: "12px", color: "var(--text-3)", margin: 0 }}>
             アカウントをお持ちでない方は{" "}
