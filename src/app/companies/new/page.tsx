@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { createCompany } from "@/actions/companies";
 import { COMPANY_STATUSES } from "@/db/schema";
 import Link from "next/link";
+import DatePicker from "@/components/DatePicker";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
@@ -53,7 +54,7 @@ export default async function NewCompanyPage() {
           </div>
           <div>
             <label style={labelStyle}>日付 <span style={{ color: "var(--text-3)", fontWeight: 400 }}>（任意 · 説明会・面接日など）</span></label>
-            <input name="eventDate" type="date" style={inputStyle} />
+            <DatePicker name="eventDate" />
           </div>
           <div>
             <label style={labelStyle}>業界</label>

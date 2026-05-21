@@ -6,6 +6,7 @@ import { updateCompany } from "@/actions/companies";
 import { COMPANY_STATUSES } from "@/db/schema";
 import Link from "next/link";
 import { use } from "react";
+import DatePicker from "@/components/DatePicker";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
@@ -70,7 +71,7 @@ export default function EditCompanyPage({ params }: Props) {
           </div>
           <div>
             <label style={labelStyle}>日付 <span style={{ color: "var(--text-3)", fontWeight: 400 }}>（任意）</span></label>
-            <input name="eventDate" type="date" defaultValue={eventDateValue} style={inputStyle} />
+            <DatePicker name="eventDate" defaultValue={eventDateValue} />
           </div>
           <div><label style={labelStyle}>業界</label><input name="industry" defaultValue={company.industry ?? ""} style={inputStyle} /></div>
           {userTags.length > 0 && (
