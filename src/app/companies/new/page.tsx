@@ -17,9 +17,6 @@ const sectionLabel: React.CSSProperties = {
   fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px",
   textTransform: "uppercase", marginBottom: "12px",
 };
-const hintStyle: React.CSSProperties = {
-  fontSize: "11px", color: "var(--text-3)", marginTop: "4px",
-};
 
 export default async function NewCompanyPage() {
   const session = await auth();
@@ -42,10 +39,21 @@ export default async function NewCompanyPage() {
             <input name="name" required placeholder="例: 株式会社〇〇" style={inputStyle} />
           </div>
           <div>
-            <label style={labelStyle}>選考ステータス</label>
+            <label style={labelStyle}>選考ステータス①</label>
             <select name="status" style={{ ...inputStyle, cursor: "pointer" }}>
               {COMPANY_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
+          </div>
+          <div>
+            <label style={labelStyle}>選考ステータス② <span style={{ color: "var(--text-3)", fontWeight: 400 }}>（任意）</span></label>
+            <select name="status2" style={{ ...inputStyle, cursor: "pointer" }}>
+              <option value="">なし</option>
+              {COMPANY_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>日付 <span style={{ color: "var(--text-3)", fontWeight: 400 }}>（任意 · 説明会・面接日など）</span></label>
+            <input name="eventDate" type="date" style={inputStyle} />
           </div>
           <div>
             <label style={labelStyle}>業界</label>
@@ -71,48 +79,24 @@ export default async function NewCompanyPage() {
         {/* URL・マイページ情報 */}
         <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "14px", padding: "20px", display: "flex", flexDirection: "column", gap: "14px" }}>
           <p style={sectionLabel}>URL・マイページ情報</p>
-          <div>
-            <label style={labelStyle}>公式URL</label>
-            <input name="url" type="url" placeholder="https://" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>新卒採用HP</label>
-            <input name="recruitUrl" type="url" placeholder="https://" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>新卒採用マイページ URL</label>
-            <input name="mypageUrl" type="url" placeholder="https://" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>マイページ ID</label>
-            <input name="mypageId" placeholder="例: taro.yamada@example.com" style={inputStyle} />
-          </div>
+          <div><label style={labelStyle}>公式URL</label><input name="url" type="url" placeholder="https://" style={inputStyle} /></div>
+          <div><label style={labelStyle}>新卒採用HP</label><input name="recruitUrl" type="url" placeholder="https://" style={inputStyle} /></div>
+          <div><label style={labelStyle}>新卒採用マイページ URL</label><input name="mypageUrl" type="url" placeholder="https://" style={inputStyle} /></div>
+          <div><label style={labelStyle}>マイページ ID</label><input name="mypageId" placeholder="例: taro.yamada@example.com" style={inputStyle} /></div>
           <div>
             <label style={labelStyle}>マイページ パスワード（メモ）</label>
             <input name="mypagePassword" type="text" placeholder="例: MyPass1234" style={inputStyle} />
-            <p style={hintStyle}>※ 暗号化されずに保存されます。取り扱いにご注意ください。</p>
+            <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px" }}>※ 暗号化されずに保存されます。取り扱いにご注意ください。</p>
           </div>
         </div>
 
         {/* 企業研究メモ */}
         <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "14px", padding: "20px", display: "flex", flexDirection: "column", gap: "14px" }}>
           <p style={sectionLabel}>企業研究メモ（任意）</p>
-          <div>
-            <label style={labelStyle}>強み</label>
-            <textarea name="strengths" rows={2} placeholder="例: 国内シェアNo.1、独自技術..." style={{ ...inputStyle, resize: "none", fontFamily: "inherit" }} />
-          </div>
-          <div>
-            <label style={labelStyle}>顧客</label>
-            <textarea name="customers" rows={2} placeholder="例: 大手製造業、官公庁..." style={{ ...inputStyle, resize: "none", fontFamily: "inherit" }} />
-          </div>
-          <div>
-            <label style={labelStyle}>競合相手</label>
-            <textarea name="competitors" rows={2} placeholder="例: ○○株式会社、△△社..." style={{ ...inputStyle, resize: "none", fontFamily: "inherit" }} />
-          </div>
-          <div>
-            <label style={labelStyle}>備考</label>
-            <textarea name="notes" rows={2} style={{ ...inputStyle, resize: "none", fontFamily: "inherit" }} />
-          </div>
+          <div><label style={labelStyle}>強み</label><textarea name="strengths" rows={2} placeholder="例: 国内シェアNo.1..." style={{ ...inputStyle, resize: "none", fontFamily: "inherit" }} /></div>
+          <div><label style={labelStyle}>顧客</label><textarea name="customers" rows={2} placeholder="例: 大手製造業..." style={{ ...inputStyle, resize: "none", fontFamily: "inherit" }} /></div>
+          <div><label style={labelStyle}>競合相手</label><textarea name="competitors" rows={2} placeholder="例: ○○株式会社..." style={{ ...inputStyle, resize: "none", fontFamily: "inherit" }} /></div>
+          <div><label style={labelStyle}>備考</label><textarea name="notes" rows={2} style={{ ...inputStyle, resize: "none", fontFamily: "inherit" }} /></div>
         </div>
 
         <button type="submit" style={{

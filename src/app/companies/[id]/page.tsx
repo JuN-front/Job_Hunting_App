@@ -5,6 +5,7 @@ import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { deleteCompany } from "@/actions/companies";
+import { statusConfig, fallbackCfg } from "@/lib/statusConfig";
 
 const statusConfig: Record<string, { color: string; bg: string }> = {
   "説明会":                  { color: "#9399a8", bg: "rgba(147,153,168,0.12)" },
@@ -36,7 +37,8 @@ export default async function CompanyDetailPage({ params }: Props) {
   });
   if (!company) notFound();
 
-  const cfg = statusConfig[company.status] ?? { color: "#9399a8", bg: "rgba(147,153,168,0.12)" };
+  const cfg = statusConfig[company.status] ?? fallbackCfg;
+  const cfg2 = company.status2 ? (statusConfig[company.status2] ?? fallbackCfg) : null;
 
   return (
     <div style={{ maxWidth: "660px" }}>
@@ -51,6 +53,11 @@ export default async function CompanyDetailPage({ params }: Props) {
             {company.recruitUrl && <a href={company.recruitUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "var(--cyan)", textDecoration: "none" }}>採用HP ↗</a>}
             {company.mypageUrl && <a href={company.mypageUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "var(--green)", textDecoration: "none" }}>マイページ ↗</a>}
             {company.mypageId && <span style={{ fontSize: "12px", color: "var(--text-3)" }}>ID: {company.mypageId}</span>}
+            {company.eventDate && (
+              <span style={{ fontSize: "12px", color: "var(--text-3)" }}>
+                📅 {new Date(company.eventDate).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" })}
+              </span>
+            )}
           </div>
         </div>
         <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
@@ -71,12 +78,16 @@ export default async function CompanyDetailPage({ params }: Props) {
       <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "16px 20px", marginBottom: "10px" }}>
         <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "10px" }}>選考ステータス</p>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{
-            fontSize: "13px", fontWeight: "600", padding: "5px 14px", borderRadius: "20px",
-            color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.color}50`,
-          }}>
-            {company.status}
-          </span>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+            <span style={{ fontSize: "13px", fontWeight: "600", padding: "5px 14px", borderRadius: "20px", color: cfg.color, background: cfg.bg, border: `1px solid 50` }}>
+              {company.status}
+            </span>
+            {cfg2 && company.status2 && (
+              <span style={{ fontSize: "13px", fontWeight: "600", padding: "5px 14px", borderRadius: "20px", color: cfg2.color, background: cfg2.bg, border: `1px solid 50` }}>
+                {company.status2}
+              </span>
+            )}
+          </div>
           <Link href={`/companies/${company.id}/edit`} style={{
             fontSize: "11px", fontWeight: "500", padding: "5px 12px", borderRadius: "7px",
             border: "1px solid var(--border-2)", color: "var(--text-2)",

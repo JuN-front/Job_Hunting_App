@@ -16,7 +16,7 @@ export const users = pgTable("users", {
   passwordHash: text("password_hash"),
   name: text("name"),
   image: text("image"),
-  logoBase64: text("logo_base64"), // ユーザーロゴ画像
+  logoBase64: text("logo_base64"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -54,6 +54,7 @@ export const verificationTokens = pgTable("verification_tokens", {
 export const COMPANY_STATUSES = [
   "説明会",
   "IS内定",
+  "IS不合格",
   "ES提出",
   "一次面接/カジュアル面談",
   "二次面接",
@@ -62,7 +63,7 @@ export const COMPANY_STATUSES = [
   "内定",
   "入社検討候補",
   "辞退",
-  "不合格",
+  "本選考不合格",
 ] as const;
 
 export type CompanyStatus = (typeof COMPANY_STATUSES)[number];
@@ -72,16 +73,18 @@ export const companies = pgTable("companies", {
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   status: text("status").$type<CompanyStatus>().notNull().default("説明会"),
+  status2: text("status2").$type<CompanyStatus>(),          // ②追加タグ
   industry: text("industry"),
-  url: text("url"),                         // 公式URL
-  recruitUrl: text("recruit_url"),          // 新卒採用HP
+  url: text("url"),
+  recruitUrl: text("recruit_url"),
   mypageUrl: text("mypage_url"),
   mypageId: text("mypage_id"),
-  mypagePassword: text("mypage_password"),            // 新卒採用マイページ
-  strengths: text("strengths"),             // 強み
-  customers: text("customers"),             // 顧客
-  competitors: text("competitors"),         // 競合相手
+  mypagePassword: text("mypage_password"),
+  strengths: text("strengths"),
+  customers: text("customers"),
+  competitors: text("competitors"),
   notes: text("notes"),
+  eventDate: timestamp("event_date", { mode: "date" }),     // ④日付
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

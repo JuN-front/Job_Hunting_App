@@ -15,9 +15,11 @@ async function getSession() {
 }
 
 function extractCompanyFields(formData: FormData) {
+  const eventDateRaw = formData.get("eventDate") as string;
   return {
     name: formData.get("name") as string,
     status: (formData.get("status") as CompanyStatus) ?? "説明会",
+    status2: (formData.get("status2") as CompanyStatus) || null,
     industry: (formData.get("industry") as string) || null,
     url: (formData.get("url") as string) || null,
     recruitUrl: (formData.get("recruitUrl") as string) || null,
@@ -28,6 +30,7 @@ function extractCompanyFields(formData: FormData) {
     customers: (formData.get("customers") as string) || null,
     competitors: (formData.get("competitors") as string) || null,
     notes: (formData.get("notes") as string) || null,
+    eventDate: eventDateRaw ? new Date(eventDateRaw) : null,
   };
 }
 
@@ -61,7 +64,7 @@ export async function updateCompany(id: string, formData: FormData) {
     await db.insert(companyTags).values(tagIds.map(tagId => ({ companyId: id, tagId })));
   }
 
-  revalidatePath(`/companies/`);
+  revalidatePath(`/companies/${id}`);
   revalidatePath("/companies");
 }
 
