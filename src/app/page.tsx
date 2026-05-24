@@ -12,10 +12,13 @@ export default async function DashboardPage() {
 
   const allCompanies = await db.query.companies.findMany({
     where: eq(companies.userId, userId),
-    orderBy: (c, { desc }) => [desc(c.updatedAt)],
   });
 
-  const recent = allCompanies.slice(0, 10);
+  const recent = await db.query.companies.findMany({
+    where: eq(companies.userId, userId),
+    orderBy: (c, { desc }) => [desc(c.updatedAt)],
+    limit: 10,
+  });
   const activeCount = allCompanies.filter(c =>
     !["内定", "辞退", "本選考不合格", "IS不合格", "入社検討候補"].includes(c.status)
   ).length;
