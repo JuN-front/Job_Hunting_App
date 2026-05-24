@@ -1,8 +1,8 @@
-import { db } from "@/db";
-import { tags } from "@/db/schema";
-import { auth } from "@/auth";
-import { eq } from "drizzle-orm";
+"use client";
+
+import { useState } from "react";
 import { createTag, deleteTag } from "@/actions/tags";
+import { useEffect } from "react";
 
 const PRESET_COLORS = [
   "#7c6af7", "#22d3ee", "#34d399", "#fbbf24",
@@ -10,11 +10,40 @@ const PRESET_COLORS = [
   "#a78bfa", "#9399a8",
 ];
 
-export default async function TagsPage() {
-  const session = await auth();
-  const userId = session!.user.id;
+type Tag = { id: string; name: string; color: string };
 
-  const userTags = await db.query.tags.findMany({ where: eq(tags.userId, userId) });
+export default function TagsPage() {
+  const [userTags, setUserTags] = useState<Tag[]>([]);
+  const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
+  const [tagName, setTagName] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/tags-list")
+      .then(r => r.json())
+      .then(data => setUserTags(data.tags));
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!tagName.trim()) return;
+    setSaving(true);
+    const formData = new FormData();
+    formData.append("name", tagName);
+    formData.append("color", selectedColor);
+    await createTag(formData);
+    setTagName("");
+    setSelectedColor(PRESET_COLORS[0]);
+    // リロードして最新タグを反映
+    const data = await fetch("/api/tags-list").then(r => r.json());
+    setUserTags(data.tags);
+    setSaving(false);
+  }
+
+  async function handleDelete(id: string) {
+    await deleteTag(id);
+    setUserTags(prev => prev.filter(t => t.id !== id));
+  }
 
   return (
     <div style={{ maxWidth: "520px" }}>
@@ -22,35 +51,93 @@ export default async function TagsPage() {
 
       {/* 作成フォーム */}
       <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "14px", padding: "22px", marginBottom: "20px" }}>
-        <p style={{ fontSize: "12px", fontWeight: "600", color: "var(--text-2)", marginBottom: "16px", letterSpacing: "0.3px" }}>新しいタグを作成</p>
-        <form action={createTag} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+        <p style={{ fontSize: "12px", fontWeight: "600", color: "var(--text-2)", marginBottom: "16px" }}>新しいタグを作成</p>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           <div>
             <label style={{ display: "block", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", marginBottom: "6px" }}>タグ名</label>
-            <input name="name" required placeholder="例: 第一志望、IT・Web" style={{
-              width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
-              borderRadius: "8px", padding: "9px 12px", fontSize: "13px", color: "var(--text)", outline: "none",
-            }} />
+            <input
+              value={tagName}
+              onChange={e => setTagName(e.target.value)}
+              required
+              placeholder="例: 第一志望、IT・Web"
+              style={{
+                width: "100%", background: "var(--bg-3)", border: "1px solid var(--border-2)",
+                borderRadius: "8px", padding: "9px 12px", fontSize: "13px", color: "var(--text)", outline: "none",
+              }}
+            />
           </div>
+
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", marginBottom: "8px" }}>カラー</label>
+            <label style={{ display: "block", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", marginBottom: "10px" }}>カラー</label>
+
+            {/* プレビュー */}
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+              <div style={{
+                width: "32px", height: "32px", borderRadius: "8px",
+                background: selectedColor, flexShrink: 0,
+                boxShadow: `0 0 0 3px ${selectedColor}40`,
+                transition: "all 0.2s",
+              }} />
+              <span style={{
+                fontSize: "13px", fontWeight: "500", padding: "4px 12px", borderRadius: "20px",
+                color: selectedColor, background: selectedColor + "22",
+              }}>
+                {tagName || "タグ名プレビュー"}
+              </span>
+            </div>
+
+            {/* プリセットカラー */}
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
               {PRESET_COLORS.map(color => (
-                <label key={color} style={{ cursor: "pointer" }}>
-                  <input type="radio" name="color" value={color} style={{ display: "none" }} defaultChecked={color === "#7c6af7"} />
-                  <div style={{
-                    width: "26px", height: "26px", borderRadius: "50%",
-                    background: color, cursor: "pointer", transition: "transform 0.15s",
-                  }} />
-                </label>
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setSelectedColor(color)}
+                  style={{
+                    width: "28px", height: "28px", borderRadius: "50%",
+                    background: color, border: "none", cursor: "pointer",
+                    boxShadow: selectedColor === color
+                      ? `0 0 0 2px var(--bg-2), 0 0 0 4px ${color}`
+                      : "none",
+                    transform: selectedColor === color ? "scale(1.15)" : "scale(1)",
+                    transition: "all 0.15s",
+                  }}
+                />
               ))}
-              <input type="color" name="color" style={{ width: "26px", height: "26px", borderRadius: "50%", border: "none", cursor: "pointer", padding: 0, background: "none" }} title="カスタムカラー" />
+              {/* カスタムカラー */}
+              <div style={{ position: "relative" }}>
+                <input
+                  type="color"
+                  value={selectedColor}
+                  onChange={e => setSelectedColor(e.target.value)}
+                  style={{
+                    width: "28px", height: "28px", borderRadius: "50%",
+                    border: !PRESET_COLORS.includes(selectedColor)
+                      ? `3px solid ${selectedColor}`
+                      : "2px dashed var(--border-2)",
+                    cursor: "pointer", padding: 0, background: "none",
+                    boxShadow: !PRESET_COLORS.includes(selectedColor)
+                      ? `0 0 0 2px var(--bg-2), 0 0 0 4px ${selectedColor}`
+                      : "none",
+                  }}
+                  title="カスタムカラー"
+                />
+              </div>
             </div>
           </div>
-          <button type="submit" style={{
-            width: "100%", padding: "10px", borderRadius: "8px", border: "none",
-            background: "linear-gradient(135deg, var(--accent), #6457e8)",
-            color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer",
-          }}>作成する</button>
+
+          <button
+            type="submit"
+            disabled={saving}
+            style={{
+              width: "100%", padding: "10px", borderRadius: "8px", border: "none",
+              background: saving ? "var(--bg-4)" : "linear-gradient(135deg, var(--accent), #6457e8)",
+              color: "white", fontSize: "13px", fontWeight: "600",
+              cursor: saving ? "not-allowed" : "pointer",
+            }}
+          >
+            {saving ? "作成中..." : "作成する"}
+          </button>
         </form>
       </div>
 
@@ -79,11 +166,13 @@ export default async function TagsPage() {
                     {tag.name}
                   </span>
                 </div>
-                <form action={deleteTag.bind(null, tag.id)}>
-                  <button type="submit" style={{
-                    fontSize: "12px", color: "var(--text-3)", background: "none", border: "none", cursor: "pointer",
-                  }}>削除</button>
-                </form>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(tag.id)}
+                  style={{ fontSize: "12px", color: "var(--text-3)", background: "none", border: "none", cursor: "pointer" }}
+                >
+                  削除
+                </button>
               </div>
             ))}
           </div>
