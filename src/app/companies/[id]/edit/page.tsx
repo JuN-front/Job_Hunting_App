@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { updateCompany } from "@/actions/companies";
 import { COMPANY_STATUSES } from "@/db/schema";
@@ -21,6 +21,7 @@ export default function EditCompanyPage({ params }: Props) {
   const { id } = use(params);
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const submittingRef = useRef(false);
   const [company, setCompany] = useState<any>(null);
   const [userTags, setUserTags] = useState<any[]>([]);
   const [currentTagIds, setCurrentTagIds] = useState<string[]>([]);
@@ -33,6 +34,8 @@ export default function EditCompanyPage({ params }: Props) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setSaving(true);
     const formData = new FormData(e.currentTarget);
     await updateCompany(id, formData);
@@ -116,7 +119,9 @@ export default function EditCompanyPage({ params }: Props) {
           <button type="submit" disabled={saving} style={{
             flex: 1, padding: "10px", borderRadius: "8px", border: "none",
             background: saving ? "var(--bg-4)" : "linear-gradient(135deg, var(--accent), #6457e8)",
-            color: "white", fontSize: "13px", fontWeight: "600", cursor: saving ? "not-allowed" : "pointer",
+            color: saving ? "var(--text-3)" : "white",
+            opacity: saving ? 0.7 : 1,
+            transition: "all 0.15s", fontSize: "13px", fontWeight: "600", cursor: saving ? "not-allowed" : "pointer",
           }}>{saving ? "保存中..." : "保存する"}</button>
           <Link href={`/companies/${id}`} style={{
             flex: 1, padding: "10px", borderRadius: "8px", textAlign: "center",
