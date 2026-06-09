@@ -73,18 +73,21 @@ export const companies = pgTable("companies", {
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   status: text("status").$type<CompanyStatus>().notNull().default("説明会"),
-  status2: text("status2").$type<CompanyStatus>(),          // ②追加タグ
+  status2: text("status2").$type<CompanyStatus>(),
   industry: text("industry"),
   url: text("url"),
   recruitUrl: text("recruit_url"),
   mypageUrl: text("mypage_url"),
   mypageId: text("mypage_id"),
   mypagePassword: text("mypage_password"),
-  strengths: text("strengths"),
+  // 3C分析
+  company3c: text("company_3c"),
   customers: text("customers"),
   competitors: text("competitors"),
+  // その他
+  strengths: text("strengths"),
   notes: text("notes"),
-  eventDate: timestamp("event_date", { mode: "date" }),     // ④日付
+  eventDate: timestamp("event_date", { mode: "date" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -14,22 +14,26 @@ async function getSession() {
   return session.user.id;
 }
 
+function str(formData: FormData, key: string) {
+  return (formData.get(key) as string) || null;
+}
+
 function extractCompanyFields(formData: FormData) {
   const eventDateRaw = formData.get("eventDate") as string;
   return {
     name: formData.get("name") as string,
     status: (formData.get("status") as CompanyStatus) ?? "説明会",
     status2: (formData.get("status2") as CompanyStatus) || null,
-    industry: (formData.get("industry") as string) || null,
-    url: (formData.get("url") as string) || null,
-    recruitUrl: (formData.get("recruitUrl") as string) || null,
-    mypageUrl: (formData.get("mypageUrl") as string) || null,
-    mypageId: (formData.get("mypageId") as string) || null,
-    mypagePassword: (formData.get("mypagePassword") as string) || null,
-    strengths: (formData.get("strengths") as string) || null,
-    customers: (formData.get("customers") as string) || null,
-    competitors: (formData.get("competitors") as string) || null,
-    notes: (formData.get("notes") as string) || null,
+    industry: str(formData, "industry"),
+    url: str(formData, "url"),
+    recruitUrl: str(formData, "recruitUrl"),
+    mypageUrl: str(formData, "mypageUrl"),
+    mypageId: str(formData, "mypageId"),
+    mypagePassword: str(formData, "mypagePassword"),
+    company3c: str(formData, "company3c"),
+    customers: str(formData, "customers"),
+    competitors: str(formData, "competitors"),
+    notes: str(formData, "notes"),
     eventDate: eventDateRaw ? new Date(eventDateRaw) : null,
   };
 }
