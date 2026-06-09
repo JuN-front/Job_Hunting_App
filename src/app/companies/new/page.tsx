@@ -115,6 +115,29 @@ export default function NewCompanyPage() {
           <div><label style={lbl}>Value（バリュー）</label><textarea name="companyValue" rows={2} placeholder="企業が大切にしている価値観" style={ta(2)} /></div>
         </div>
 
+        {/* SWOT分析 */}
+        <div style={card}>
+          <p style={sec}>SWOT分析（任意）</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+            <div>
+              <label style={{ ...lbl, color: "#34d399" }}>S（強み）</label>
+              <textarea name="swotStrength" rows={4} placeholder="内部環境の強み" style={ta(4)} />
+            </div>
+            <div>
+              <label style={{ ...lbl, color: "#f87171" }}>W（弱み）</label>
+              <textarea name="swotWeakness" rows={4} placeholder="内部環境の弱み" style={ta(4)} />
+            </div>
+            <div>
+              <label style={{ ...lbl, color: "#60a5fa" }}>O（機会）</label>
+              <textarea name="swotOpportunity" rows={4} placeholder="外部環境の機会" style={ta(4)} />
+            </div>
+            <div>
+              <label style={{ ...lbl, color: "#fb923c" }}>T（脅威）</label>
+              <textarea name="swotThreat" rows={4} placeholder="外部環境の脅威" style={ta(4)} />
+            </div>
+          </div>
+        </div>
+
         {/* 備考 */}
         <div style={card}>
           <p style={sec}>備考</p>

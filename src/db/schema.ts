@@ -82,6 +82,10 @@ export const companies = pgTable("companies", {
   mypagePassword: text("mypage_password"),
   // 3C分析
   company3c: text("company_3c"),
+  swotStrength: text("swot_strength"),
+  swotWeakness: text("swot_weakness"),
+  swotOpportunity: text("swot_opportunity"),
+  swotThreat: text("swot_threat"),
   customers: text("customers"),
   competitors: text("competitors"),
   // その他

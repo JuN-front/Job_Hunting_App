@@ -100,29 +100,27 @@ export default async function CompanyDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* 企業研究メモ */}
-      {(company.strengths || company.customers || company.competitors) && (
+      {/* 3C分析 */}
+      {(company.company3c || company.customers || company.competitors) && (
         <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "18px 20px", marginBottom: "10px" }}>
-          <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "14px" }}>企業研究メモ</p>
+          <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "14px" }}>3C分析</p>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {company.strengths && (
-              <div>
-                <p style={{ fontSize: "11px", color: "var(--text-3)", marginBottom: "4px" }}>強み</p>
-                <p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.strengths}</p>
-              </div>
-            )}
-            {company.customers && (
-              <div>
-                <p style={{ fontSize: "11px", color: "var(--text-3)", marginBottom: "4px" }}>顧客</p>
-                <p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.customers}</p>
-              </div>
-            )}
-            {company.competitors && (
-              <div>
-                <p style={{ fontSize: "11px", color: "var(--text-3)", marginBottom: "4px" }}>競合相手</p>
-                <p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.competitors}</p>
-              </div>
-            )}
+            {company.company3c && <div><p style={{ fontSize: "11px", color: "var(--text-3)", marginBottom: "4px" }}>Company</p><p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.company3c}</p></div>}
+            {company.customers && <div><p style={{ fontSize: "11px", color: "var(--text-3)", marginBottom: "4px" }}>Customer</p><p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.customers}</p></div>}
+            {company.competitors && <div><p style={{ fontSize: "11px", color: "var(--text-3)", marginBottom: "4px" }}>Competitor</p><p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.competitors}</p></div>}
+          </div>
+        </div>
+      )}
+
+      {/* SWOT分析 */}
+      {(company.swotStrength || company.swotWeakness || company.swotOpportunity || company.swotThreat) && (
+        <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "18px 20px", marginBottom: "10px" }}>
+          <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "14px" }}>SWOT分析</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            {company.swotStrength && <div style={{ background: "rgba(52,211,153,0.06)", borderRadius: "8px", padding: "10px" }}><p style={{ fontSize: "11px", color: "#34d399", marginBottom: "4px", fontWeight: "600" }}>S（強み）</p><p style={{ fontSize: "12px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.swotStrength}</p></div>}
+            {company.swotWeakness && <div style={{ background: "rgba(248,113,113,0.06)", borderRadius: "8px", padding: "10px" }}><p style={{ fontSize: "11px", color: "#f87171", marginBottom: "4px", fontWeight: "600" }}>W（弱み）</p><p style={{ fontSize: "12px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.swotWeakness}</p></div>}
+            {company.swotOpportunity && <div style={{ background: "rgba(96,165,250,0.06)", borderRadius: "8px", padding: "10px" }}><p style={{ fontSize: "11px", color: "#60a5fa", marginBottom: "4px", fontWeight: "600" }}>O（機会）</p><p style={{ fontSize: "12px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.swotOpportunity}</p></div>}
+            {company.swotThreat && <div style={{ background: "rgba(251,146,60,0.06)", borderRadius: "8px", padding: "10px" }}><p style={{ fontSize: "11px", color: "#fb923c", marginBottom: "4px", fontWeight: "600" }}>T（脅威）</p><p style={{ fontSize: "12px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.swotThreat}</p></div>}
           </div>
         </div>
       )}
