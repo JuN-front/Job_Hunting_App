@@ -35,6 +35,10 @@ function extractCompanyFields(formData: FormData) {
     swotWeakness: str(formData, "swotWeakness"),
     swotOpportunity: str(formData, "swotOpportunity"),
     swotThreat: str(formData, "swotThreat"),
+    // VMV
+    vision: str(formData, "vision"),
+    mission: str(formData, "mission"),
+    companyValue: str(formData, "companyValue"),
     customers: str(formData, "customers"),
     competitors: str(formData, "competitors"),
     notes: str(formData, "notes"),

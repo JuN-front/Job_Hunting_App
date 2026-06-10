@@ -86,6 +86,10 @@ export const companies = pgTable("companies", {
   swotWeakness: text("swot_weakness"),
   swotOpportunity: text("swot_opportunity"),
   swotThreat: text("swot_threat"),
+  // VMV
+  vision: text("vision"),
+  mission: text("mission"),
+  companyValue: text("company_value"),
   customers: text("customers"),
   competitors: text("competitors"),
   // その他

@@ -125,6 +125,18 @@ export default async function CompanyDetailPage({ params }: Props) {
         </div>
       )}
 
+      {/* VMV */}
+      {(company.vision || company.mission || company.companyValue) && (
+        <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "18px 20px", marginBottom: "10px" }}>
+          <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "14px" }}>VMV</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {company.vision && <div><p style={{ fontSize: "11px", color: "var(--text-3)", marginBottom: "4px" }}>Vision</p><p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.vision}</p></div>}
+            {company.mission && <div><p style={{ fontSize: "11px", color: "var(--text-3)", marginBottom: "4px" }}>Mission</p><p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.mission}</p></div>}
+            {company.companyValue && <div><p style={{ fontSize: "11px", color: "var(--text-3)", marginBottom: "4px" }}>Value</p><p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.companyValue}</p></div>}
+          </div>
+        </div>
+      )}
+
       {/* Memos */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "16px 0 10px" }}>
         <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "1px", textTransform: "uppercase", margin: 0 }}>
