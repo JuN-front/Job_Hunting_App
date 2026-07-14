@@ -54,7 +54,7 @@ export const verificationTokens = pgTable("verification_tokens", {
 export const COMPANY_STATUSES = [
   "説明会",
   "IS内定",
-  "IS不合格",
+  "IS不合格/抽選落ち",
   "ES提出",
   "一次選考/面接",
   "カジュアル面談",

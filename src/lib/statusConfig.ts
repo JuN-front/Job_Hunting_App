@@ -1,7 +1,7 @@
 export const statusConfig: Record<string, { color: string; bg: string }> = {
   "説明会":                  { color: "#9399a8", bg: "rgba(147,153,168,0.12)" },
   "IS内定":                  { color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },  // ②アンバー
-  "IS不合格":                { color: "#94a3b8", bg: "rgba(148,163,184,0.12)" }, // ③スレートグレー
+  "IS不合格/抽選落ち":        { color: "#94a3b8", bg: "rgba(148,163,184,0.12)" }, // ③スレートグレー
   "ES提出":                  { color: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
   "一次選考/面接":            { color: "#22d3ee", bg: "rgba(34,211,238,0.12)" },
   "カジュアル面談":           { color: "#a78bfa", bg: "rgba(167,139,250,0.12)" },
