@@ -20,7 +20,7 @@ export default async function DashboardPage() {
     limit: 10,
   });
   const activeCount = allCompanies.filter(c =>
-    !["内定", "辞退", "本選考不合格", "IS不合格", "入社検討候補"].includes(c.status)
+    !["内定", "辞退", "本選考不合格", "IS不合格/抽選落ち", "入社検討候補"].includes(c.status)
   ).length;
 
   return (
