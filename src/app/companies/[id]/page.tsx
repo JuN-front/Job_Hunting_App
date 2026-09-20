@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { deleteCompany } from "@/actions/companies";
 import { statusConfig, fallbackCfg } from "@/lib/statusConfig";
+import AiChat from "@/components/AiChat";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -178,6 +179,7 @@ export default async function CompanyDetailPage({ params }: Props) {
           <p style={{ fontSize: "13px", color: "var(--text-2)", whiteSpace: "pre-wrap", margin: 0 }}>{company.notes}</p>
         </div>
       )}
+      <AiChat companyId={company.id} companyName={company.name} />
     </div>
   );
 }
