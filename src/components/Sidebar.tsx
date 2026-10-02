@@ -10,6 +10,7 @@ const navItems = [
   { href: "/companies", label: "企業一覧", icon: "◈" },
   { href: "/tags", label: "タグ管理", icon: "◇" },
   { href: "/settings", label: "設定", icon: "⚙" },
+  { href: "/job-sites", label: "就活サイト", icon: "🔑" },
 ];
 
 const LogoIcon = () => (

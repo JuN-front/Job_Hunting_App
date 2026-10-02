@@ -54,11 +54,11 @@ export const verificationTokens = pgTable("verification_tokens", {
 export const COMPANY_STATUSES = [
   "説明会",
   "IS内定",
-  "IS不合格/抽選落ち",
+  "IS不合格",
   "ES提出",
-  "一次選考/面接",
-  "カジュアル面談",
-  "二次面接以降",
+  "一次面接/カジュアル面談",
+  "二次面接",
+  "三次面接以降",
   "最終面接",
   "内定",
   "入社検討候補",
@@ -137,6 +137,24 @@ export const memos = pgTable("memos", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+
+// ─── Job Site Accounts ────────────────────────────────────────────────────────
+export const jobSiteAccounts = pgTable("job_site_accounts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  siteName: text("site_name").notNull(),
+  siteUrl: text("site_url"),
+  loginId: text("login_id"),
+  password: text("password"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const jobSiteAccountsRelations = relations(jobSiteAccounts, ({ one }) => ({
+  user: one(users, { fields: [jobSiteAccounts.userId], references: [users.id] }),
+}));
 
 // ─── Relations ────────────────────────────────────────────────────────────────
 export const usersRelations = relations(users, ({ many }) => ({

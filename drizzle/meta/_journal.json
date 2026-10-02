@@ -190,6 +190,13 @@
       "when": 1714000000026,
       "tag": "0026_add_company_value",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1714000000027,
+      "tag": "0027_add_job_site_accounts",
+      "breakpoints": true
     }
   ]
 }
