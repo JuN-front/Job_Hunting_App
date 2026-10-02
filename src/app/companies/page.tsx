@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { COMPANY_STATUSES } from "@/db/schema";
@@ -24,6 +24,11 @@ function CompaniesContent() {
 
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [userTags, setUserTags] = useState<Tag[]>([]);
+  const [inputValue, setInputValue] = useState(q); // ローカルの入力値
+  const isComposing = useRef(false);               // IME変換中フラグ
+
+  // URLのqパラメータが外から変わったとき（リセットなど）にinputValueを同期
+  useEffect(() => { setInputValue(q); }, [q]);
 
   useEffect(() => {
     fetch("/api/companies-list")
@@ -73,8 +78,20 @@ function CompaniesContent() {
       <div style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "10px", padding: "14px 16px", marginBottom: "16px" }}>
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
           <input
-            value={q} placeholder="企業名で検索..."
-            onChange={e => updateParam("q", e.target.value)}
+            value={inputValue}
+            placeholder="企業名で検索..."
+            onChange={e => setInputValue(e.target.value)}
+            onCompositionStart={() => { isComposing.current = true; }}
+            onCompositionEnd={e => {
+              isComposing.current = false;
+              updateParam("q", (e.target as HTMLInputElement).value);
+            }}
+            onKeyDown={e => {
+              if (e.key === "Enter" && !isComposing.current) {
+                updateParam("q", inputValue);
+              }
+            }}
+            onBlur={() => updateParam("q", inputValue)}
             style={{ flex: "1", minWidth: "160px", background: "var(--bg-3)", border: "1px solid var(--border-2)", borderRadius: "7px", padding: "7px 12px", fontSize: "13px", color: "var(--text)", outline: "none" }}
           />
           <select value={status} onChange={e => updateParam("status", e.target.value)} style={{ background: "var(--bg-3)", border: "1px solid var(--border-2)", borderRadius: "7px", padding: "7px 12px", fontSize: "13px", color: "var(--text)", outline: "none" }}>
